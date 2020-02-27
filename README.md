@@ -7,7 +7,7 @@ For this new *desired level* of *stability* in this **ArrayTs** library to be po
 
 [Original ArrayJs (2013)](https://github.com/EmptyCubes/Array.js) Authors: [Jack Godwin](https://github.com/KodingSykosis) & [Ryan Mauldin](https://github.com/ryanmauldin)
 [Current ArrayTs (2020)](https://github.com/EmptyCubes/Array.js) Author: [Ryan Mauldin](https://github.com/ryanmauldin).
-    *** 2'27/2020 [Ryan Mauldin](https://github.com/ryanmauldin), refactored the original ArrayJS library to use a completely [TypeScript](http://www.typescriptlang.org/) & non-prototype based approach.
+    - **02/27/2020** [Ryan Mauldin](https://github.com/ryanmauldin), refactored the original ArrayJS library to use a completely [TypeScript](http://www.typescriptlang.org/) & non-prototype based approach.
 
 ```typescript
 // Usage:
