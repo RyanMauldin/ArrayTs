@@ -1,61 +1,109 @@
-/// <reference path="./ArrayTs.d.ts" />
-
 /**
- * **ArrayTs** is a [TypeScript](http://www.typescriptlang.org/) library which *enhances* the *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type* by exposing additional extension methods,
- * similar to the [`IEnumerable`](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=netframework-4.8) *interface* in [Microsoft's](https://www.microsoft.com/en-us/) [.NET Core](https://docs.microsoft.com/en-us/dotnet/core/) *framework*.
- * The *generic* [`Array&lt;T>`](https://www.typescriptlang.org/docs/handbook/generics.html) *interface* is being *extended* for the [ArrayTs (2020)](https://github.com/RyanMauldin/ArrayTs) implementation of the [`IEnumerable`](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=netframework-4.8) *interface*
- * features, *exposed* to the *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*. The [ArrayJs (2013)](https://github.com/EmptyCubes/Array.js) version differed in implementation semantics,
- * in that the [`IEnumerable`](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=netframework-4.8) *interface extension methods* exposed to the *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*,
- * were previously *coupled*, *directly* to the *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*, extended through *prototype extension method definitions*, e.g., `Array.prototype.zip = function (second, zipFn) {...}`.
- *
- * When *prototype extension method definitions* are used in **isolation** of other *conflicting* libraries, the *extended prototype coding conventions* are **practical**. *Prototype extension method* *definitions*
- * align themselves to be **directly** *called* off of the *root type* that is already being dealt with from a library standpoint, e.g. *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*. Having
- * *direct access* to the *extension methods* off of the *root type* further *minimizes* the amount of code needed to be *implemented* by the *developer*, and the *developer* is less likely to need to explicitly cast
- * all generically typed facets to be explicitly defined. The [TypeScript](http://www.typescriptlang.org/) compiler with *generics* or *complicated interfaces*, and the overall *code aesthetics* and *readability* when
- * dealing with the *extended type* will be at its most *condensed* and *concise* state. Utilizing *prototype extension method conventions* however, was **not** a *favorable approach* when contemplating the *redesign*
- * of **ArrayTs**. The *stance* **ArrayTs** is taking **now**, is that *this library* **must** be *reliable* and *resilient* to *failure* throughout an application's *entire development life-cycle*. **ArrayTs** **must**
- * remain *resilient to failure* when *adding* or *swapping out*, additional *external* *javascript* or [TypeScript](http://www.typescriptlang.org/) *repository packages* from *popular sources*, e.g. [npm](https://www.npmjs.com/).
- * **ArrayTs** should also remain *side-effect free* while developers are implementing *solution configuration changes*, as well as when *upgrading* [TypeScript](http://www.typescriptlang.org/) versions. **ArrayTs**
- * *now has* the *capability* to *adopt* a *favorable audience*.
- *
- * For this new *desired level* of *stability* in this **ArrayTs** library to be possible, this redesign had *avoided* using any *prototype extension method definitions* throughout. *Pitfalls* for *extending prototype
- * method definitions* on a *common type*, such as the *built-in* *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*, placed **ArrayTs** at *great risk* for *external package repository integration*
- * [failures](https://stackoverflow.com/questions/8859828/javascript-what-dangers-are-in-extending-array-prototype), e.g. when consuming other *well-known repository library packages* from *popular package repository sources*,
- * e.g. [npm](https://www.npmjs.com/). *External repository packages* have the *capability* to *introduce* *extension method name collisions* for libraries which **compete** to *extend* the *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*,
- * with their own *prototype extension* method definitions. This is especially true for **ArrayTs**, when considering the following used method names, e.g. `Clone()`, `Count()`, `Contains()`. These used method names are
- * commonly used names in the industry in general, even beyond any specific usage withing the intended [`IEnumerable`](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=netframework-4.8) *interface*
- * *space*, especially *non-IEnumerable* implemented methods such as `Clone()`. `Clone()`, for instance, is *custom* to this **ArrayTs** list of *extension methods*, and is **not listed** as an [`IEnumerable`](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=netframework-4.8) *interface*
- * method. However, `Clone()` could *very easily* be *encountered* within other *common repository packages*.
- *
- * [Original ArrayJs (2013)](https://github.com/EmptyCubes/Array.js) Authors: [Jack Godwin](https://github.com/KodingSykosis) & [Ryan Mauldin](https://github.com/ryanmauldin)
- *
- * [Current ArrayTs (2020)](https://github.com/RyanMauldin/ArrayTs) Author: [Ryan Mauldin](https://github.com/ryanmauldin).
- *
- *
- * **Major Refactor Notes**
- *
- * **02/27/2020** - [Ryan Mauldin](https://github.com/ryanmauldin), refactored the original ArrayJS library to use a completely [TypeScript](http://www.typescriptlang.org/) & non-prototype based approach.
- *
+ * [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) is a [`TypeScript`](http://www.typescriptlang.org/) *library*
+ * which ***enhances*** the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+ * *type* by ***exposing*** *extension methods*, ***similar*** to the [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+ * *interface* in [`Microsoft's`](https://www.microsoft.com/en-us/) [`.NET Core`](https://docs.microsoft.com/en-us/dotnet/core/)
+ * *framework*. The ***generic*** [`Array<T>`](https://www.typescriptlang.org/docs/handbook/generics.html) *interface* is
+ * being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *implementation* of the
+ * [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+ * *interface* features, ***exposed*** to the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+ * *type*. ***See usage:***
+ * 
  * ```typescript
- * // Usage:
+ * /// The following code is subject to change
  * /// <reference path="./ArrayTs/ArrayTs.ts"
  * const numbers: Array<number> = [ 1, 2, 3, 4 ];
- * const words: Array<string> = [ "one", "two", "three" ];
- * let zipped = new Array<string>();
- * if (!ArrayTs.IsNullOrEmpty(numbers) && !ArrayTs.IsNullOrEmpty(words))
- *     zipped = (<ArrayTs.Get<string>>words).Zip(numbers, (first: string, second: number) => first + " " + second);
- * for (const zip of zipped) { console.log(zip); }
+ * let clonedNumbers: Array<number> = new Array<number>();
+ * if (!ArrayTs.IsNullOrEmpty(numbers)) clonedNumbers = (<ArrayTs.Get<number>>numbers).Clone();
+ * for (const number of clonedNumbers) { console.log(number); }
  * ```
+ * 
+ * **Version Specifics:**
+ * 
+ * ***Current Version:*** [**`ArrayTs (2020)`**](https://github.com/RyanMauldin/ArrayTs)
+ * ***, Author:*** [**`Ryan Mauldin`**](https://github.com/ryanmauldin)
+ * 
+ * **Refactor Notes:**
+ * 
+ * ***02/27/2020:*** [**`Ryan Mauldin`**](https://github.com/ryanmauldin)
+ * ***, refactored*** the *original* [**`ArrayJs (2013)`**](https://github.com/EmptyCubes/Array.js)
+ * *library* using a ***completely*** [TypeScript](http://www.typescriptlang.org/)
+ * ***& non prototype-based*** *approach*.
+ * 
+ * **History:**
+ * 
+ * ***Original Version:*** [**`ArrayJs (2013)`**](https://github.com/EmptyCubes/Array.js)
+ * ***, Authors:*** [**`Jack Godwin`**](https://github.com/KodingSykosis) ***&***
+ * [**`Ryan Mauldin`**](https://github.com/ryanmauldin)
+ *
+ * [**`ArrayTs (2020)`**](https://github.com/RyanMauldin/ArrayTs) gained its *origins* from an earlier
+ * [`JavaScript`](https://www.javascript.com/) based *project* [**`ArrayJs (2013)`**](https://github.com/EmptyCubes/Array.js).
+ * [**`ArrayJs`**](https://github.com/EmptyCubes/Array.js), ***differed*** in *implementation semantics*, in that the
+ * [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+ * *extension methods* exposed to the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+ * *type*, were previously ***coupled*** *directly* to the the [`JavaScript`](https://www.javascript.com/)
+ * [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*, through ***prototype*** *extension method definitions*,
+ * e.g., ***`Array.prototype.zip = function (second, zipFn) {...}`***.
+ *
+ * When ***prototype*** *extension method definitions* are used in ***isolation*** of other ***conflicting***
+ * *libraries*, the *extended* ***prototype*** *coding conventions* are ***practical*** and *work* as ***intended***.
+ * ***Prototype*** *extension method definitions* are *available* to be *called* ***directly*** from the
+ * *code context* of the extended ***root type***, e.g. [`JavaScript`](https://www.javascript.com/)
+ * [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*. ***Prototype-based*** *extension method*
+ * approaches will typically not *incur* additional *code implementation overhead* costs, in regards to
+ * ***downstream*** *code implementation complexity*.
+ * 
+ * Utilizing ***prototype-based***, *extension method conventions*, was **not** a *favorable design approach*,
+ * when contemplating the *redesign* with [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs).
+ * The ***stance*** [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) is taking ***now***, is that *this library*
+ * ***must*** be *reliable* and *resilient* to *failure*, throughout an application's ***entire*** *development*
+ * *life-cycle*. [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) **must** remain *resilient to failure* when
+ * *adding* or *swapping out*, additional *external* [`JavaScript`](https://www.javascript.com/) or
+ * [TypeScript](http://www.typescriptlang.org/) *repository packages* from *popular sources*, e.g.
+ * [npm](https://www.npmjs.com/) or [bower](https://bower.io/). [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+ * will remain ***side-effect free***, while developers are ***implementing*** *solution configuration changes*, as well as when
+ * *upgrading* [TypeScript](http://www.typescriptlang.org/) versions. [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+ * ***now*** has the *capability* to gain ***adoption*** by the *development community*, as *code integration*
+ * is ***safeguarded*** by the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *namespace*.
+ *
+ * For [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) to *achieve* this *new* ***desired level*** of *dependability*
+ * and *supportability*; the *new redesign* ***avoided*** *use of*, and *included* ***removal of*** *all* ***prototype***
+ * *extension method definitions*, throughout the *library*. *Pitfalls* for *extending* ***prototype*** *method definitions*
+ * on a ***common type***, such as the *built-in* [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+ * *type*, placed [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) at *great risk* for ***external*** *package repository*
+ * [**`integration failures`**](https://stackoverflow.com/questions/8859828/javascript-what-dangers-are-in-extending-array-prototype),
+ * e.g. when consuming other ***well-known*** *repository library packages* from ***popular*** *package repository sources*,
+ * e.g. [npm](https://www.npmjs.com/) or [bower](https://bower.io/).
+ * 
+ * *Importing* ***external*** *repository packages* into a project always has the *potential* to ***introduce*** *extension method*
+ * ***naming collisions*** between *repository packages*. For *libraries* which do ***compete*** with *extending* the
+ * [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp) *type*, with their own
+ * ***prototype*** *extension method definitions*. This is *especially true* for [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs),
+ * when *considering* the following ***implemented*** *method names*, e.g. ***`Clone(), Count(), Contains()`***. These
+ * ***implemented*** *method names*, are in fact ***commonly*** *used names*, from within the *software development space*,
+ * and are *likely* to be the ***first*** *method names* to ***collide*** with other *library* design *implementations*. As well,
+ * the ***`Clone()`*** *method* does ***not*** *exist* on the [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+ * *interface* for instance, and is *custom* to this [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *implementation*.
+ * However, there is a very high likelihood, that other common ***external*** *repository packages* have already extended
+ * the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp) *type* with their
+ * own ***`Clone()`*** *extension method*, which is why [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *removed all*
+ * ***prototype-based*** *extension methods* and ***provided*** *cleaner community interoperability* through ***interfaces***
+ * and ***namespaces***.
  **/
 namespace ArrayTs {
   /**
-   * **`Get<T>`** is a [TypeScript](http://www.typescriptlang.org/) class in the `ArrayTs` *namespace*, which extends the *generic* [`Array<T>`](https://www.typescriptlang.org/docs/handbook/generics.html) *type*.
-   * *`Get<T>`* *enhances* the *javascript* [`array`](https://www.w3schools.com/js/js_arrays.asp) *type* by *exposing* **additional** *extension methods*, which *incorporate* a *naming strategy* similar to the [`IEnumerable`](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=netframework-4.8) *interface*,
-   * provided with [Microsoft's](https://www.microsoft.com/en-us/) [.NET Core](https://docs.microsoft.com/en-us/dotnet/core/) framework. The `Clone()` method is a **Deep clone**,
-   * which will *surf* the *array object graph* and create an *identical copy*.
+   * **`IArray<T>`** is a [TypeScript](http://www.typescriptlang.org/) *interface* in the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+   * *namespace*, which ***enhances*** the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+   * *type* by ***exposing*** *extension methods*, ***similar*** to the [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+   * *interface* in [`Microsoft's`](https://www.microsoft.com/en-us/) [`.NET Core`](https://docs.microsoft.com/en-us/dotnet/core/)
+   * *framework*. The ***generic*** [`Array<T>`](https://www.typescriptlang.org/docs/handbook/generics.html) *interface* is
+   * being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *implementation* of the
+   * [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+   * *interface* features, ***exposed*** to the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+   * *type*. ***See usage:***
    *
    * ```typescript
-   * // Usage:
+   * /// The following code is subject to change
    * /// <reference path="./ArrayTs/ArrayTs.ts"
    * const numbers: Array<number> = [ 1, 2, 3, 4 ];
    * let clonedNumbers: Array<number>;
@@ -63,7 +111,65 @@ namespace ArrayTs {
    * for (const number of numbers) { console.log(number); }
    * ```
    **/
-  export class Get<T> extends Array<T> {
+  export interface IArray<T> {
+    Aggregate(func: Function, seed?: T): T;
+    All(predicate?: Function): boolean;
+    Any(predicate?: Function): boolean;
+    Average(): number;
+    Contains(value: any): boolean;
+    Count(predicate?: Function): number;
+    Distinct(): Array<T>;
+    ElementAt(index: number): any;
+    ElementAtOrDefault(index: number): any;
+    Except(array: Array<T>): Array<T>;
+    First(predicate?: Function): any;
+    FirstOrDefault(predicate?: Function): any;
+    GroupBy(predicate: Function, keyName: string, valName: string): Array<T>;
+    GroupJoin(inner: Array<T>, outerKey: Function, innerKey: Function, zipFn: Function): Array<T>;
+    InnerJoin(inner: Array<T>, outerKey: Function, innerKey: Function, zipFn: Function): Array<T>;
+    Intersect(array: Array<T>): Array<T>;
+    Last(predicate?: Function): any;
+    LastOrDefault(predicate: Function): any;
+    Max(selector: Function): number;
+    Min(selector: Function): number;
+    OrderBy(selector: Function): Array<T>;
+    OrderByDescending(selector: Function): Array<T>;
+    Select(selector: Function): Array<any>;
+    SelectMany(selector: Function): Array<any>;
+    SequenceEqual(array: Array<T>): boolean;
+    Single(): any;
+    SingleOrDefault(): any;
+    Skip(index: number): Array<T>;
+    SkipWhile(predicate: Function): Array<T>;
+    Sum(): number;
+    Take(count: number): Array<T>;
+    TakeWhile(predicate: Function): Array<T>;
+    Union(array: Array<T>): Array<T>;
+    Where(predicate: Function): Array<T>;
+    Zip(second: Array<T>, zipFunction: Function): Array<T>;
+  }
+
+  /**
+  * **`Get<T>`** is a [TypeScript](http://www.typescriptlang.org/) class in the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+  * *namespace*, which ***enhances*** the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+  * *type* by ***exposing*** *extension methods*, ***similar*** to the [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+  * *interface* in [`Microsoft's`](https://www.microsoft.com/en-us/) [`.NET Core`](https://docs.microsoft.com/en-us/dotnet/core/)
+  * *framework*. The ***generic*** [`Array<T>`](https://www.typescriptlang.org/docs/handbook/generics.html) *interface* is
+  * being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *implementation* of the
+  * [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+  * *interface* features, ***exposed*** to the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+  * *type*. ***See usage:***
+  *
+  * ```typescript
+  * /// The following code is subject to change
+  * /// <reference path="./ArrayTs/ArrayTs.ts"
+  * const numbers: Array<number> = [ 1, 2, 3, 4 ];
+  * let clonedNumbers: Array<number>;
+  * if (!ArrayTs.IsNullOrEmpty(numbers)) clonedNumbers = (<ArrayTs.Get<number>>numbers).Clone();
+  * for (const number of numbers) { console.log(number); }
+  * ```
+  **/
+  export class Get<T> extends Array<T> implements IArray<T> {
     Aggregate(func: Function, seed?: T): T {
       let aggregateValue: T;
       if (typeof func === "undefined" || func === null)
@@ -423,12 +529,13 @@ namespace ArrayTs {
       return results;
     }
     /**
-     * Applies a specified function to the corresponding elements of two sequences, producing a sequence of the results.
-     * The first sequence is the array itself, and the func parameter gets executed for every element zipped in the
-     * sequence.
+     * Applies a *specified function* to the *corresponding elements* of *two sequences*, *producing* a sequence
+     * of the results. The first *sequence* is the *array* itself, and the *func parameter* gets executed for
+     * every element *zipped* in the sequence.
      *
      * ```typescript
      * // Usage:
+     * /// The following code is subject to change
      * /// <reference path="./ArrayTs/ArrayTs.ts"
      * const numbers: Array<number> = [ 1, 2, 3, 4 ];
      * const words: Array<string> = [ "one", "two", "three" ];

@@ -1,0 +1,35 @@
+{
+  "name": "arrayts",
+  "version": "1.0.0",
+  "description": "ArrayTs is a TypeScript library which enhances the JavaScript array type by exposing extension methods, similar to the IEnumerable<T> interface in Microsoft's .NET Core framework. The generic Array<T> interface is being extended for ArrayTs implementation of the IEnumerable<T> interface features, exposed to the JavaScript array type.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^3.8.2"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyanMauldin/ArrayTs.git"
+  },
+  "keywords": [
+    "ArrayTs",
+    "ArrayJs",
+    "TypeScript",
+    "Array<T>",
+    "IEnumerable<T>",
+    "IEnumerable",
+    "JavaScript",
+    "array",
+    "extension"
+  ],
+  "author": "Ryan Mauldin, Jack Godwin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RyanMauldin/ArrayTs/issues"
+  },
+  "homepage": "https://github.com/RyanMauldin/ArrayTs#readme"
+}
