@@ -14,10 +14,9 @@ being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/Arra
 
 ```typescript
 /// The following code is subject to change
-/// <reference path="./ArrayTs/ArrayTs.ts"
 const numbers: Array<number> = [ 1, 2, 3, 4 ];
-let clonedNumbers: Array<number> = new Array<number>();
-if (!ArrayTs.IsNullOrEmpty(numbers)) clonedNumbers = (<ArrayTs.Get<number>>numbers).Clone();
+let clonedNumbers: ts.IArray<number> = new ts.IArray<number>();
+if (!ts.IsNullOrEmpty(numbers)) clonedNumbers = (<ts.IArray<number>>numbers).Clone();
 for (const number of clonedNumbers) { console.log(number); }
 ```
 
