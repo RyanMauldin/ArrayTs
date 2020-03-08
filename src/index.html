@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ArrayTs Extensions Demo</title>
+    <script src="./ArrayTs.js"></script>
+</head>
+    <body>
+        <script type="text/javascript">
+			function ready(fn) {
+			  if (document.readyState != 'loading'){
+				fn();
+			  } else if (document.addEventListener) {
+				document.addEventListener('DOMContentLoaded', fn);
+			  } else {
+				document.attachEvent('onreadystatechange', function() {
+				  if (document.readyState != 'loading')
+					fn();
+				});
+			  }
+			};
+			
+            ready(function () {
+                var output = document.getElementById("output");
+                var source = (new ArrayTs.Get())[{ Id: 1, Name: 'Item 1' },
+                    { Id: 2, Name: 'Item 2' },
+                    { Id: 3, Name: 'Item 3' },
+                    { Id: 4, Name: 'Item 4' },
+                    { Id: 5, Name: 'Item 5' },
+                    { Id: 6, Name: 'Item 6' },
+                    { Id: 7, Name: 'Item 7' }];
+                var target = (ArrayTs.Get)[{ Id: 8, Name: 'Item 8' },
+                    { Id: 9, Name: 'Item 9' },
+                    { Id: 10, Name: 'Item 10' },
+                    { Id: 11, Name: 'Item 11' },
+                    { Id: 12, Name: 'Item 12' },
+                    { Id: 13, Name: 'Item 13' },
+                    { Id: 14, Name: 'Item 14' }];
+                var child = (ArrayTs.Get)[{ Id: 1, Name: 'Item 8' },
+                    { Id: 2, Name: 'Item 9' },
+                    { Id: 3, Name: 'Item 10' },
+                    { Id: 4, Name: 'Item 11' },
+                    { Id: 5, Name: 'Item 12' },
+                    { Id: 6, Name: 'Item 13' },
+                    { Id: 7, Name: 'Item 14' }];
+
+                var petOwners = (ArrayTs.Get)[
+                    { Name: "Higa, Sidney", Pets: ["Scruffy", "Sam"] },
+                    { Name: "Ashkenazi, Ronen", Pets: ["Walker", "Sugar"] },
+                    { Name: "Price, Vernette", Pets: ["Scratches", "Diesel"] }
+                ];
+
+                var duplicates = (ArrayTs.Get)[{ Id: 8, Name: 'Item 8' },
+                    { Id: 9, Name: 'Item 9' },
+                    { Id: 10, Name: 'Item 10' },
+                    { Id: 10, Name: 'Item 10' }];
+
+                //
+                //Where & OrderByDesc
+                //
+
+                var query =
+                    source.Where('m=>m.Id > 3 && m.Id < 6')
+                        .OrderByDescending('m=>m.Name');
+
+
+                output.append('<b>Where & OrderByDesc</b>');
+                output.append("<br />");
+                query.forEach(function (o) {
+                    output.append("Id = " + o.Id + ", Name = " + o.Name);
+                    output.append("<br />");
+                });
+
+                //
+                //First
+                //
+
+                output.append("<br />");
+                output.append('<b>First</b>');
+                output.append("<br />");
+                var o = source.First('m=>m.Id > 3');
+                output.append("Id = " + o.Id + ", Name = " + o.Name);
+                output.append("<br />");
+
+                //
+                //First Exception
+                //
+
+                output.append("<br />");
+                output.append('<b>First exception.</b>');
+                output.append("<br />");
+                try {
+                    o = source.First('m=>m.Id > 7');
+                    output.append("Id = " + o.Id + ", Name = " + o.Name);
+                } catch (e) {
+                    output.append('' + e);
+                }
+                output.append("<br />");
+
+                //
+                //FirstOrDefault
+                //
+
+                output.append("<br />");
+                output.append('<b>FirstOrDefault</b>');
+                output.append("<br />");
+                o = source.FirstOrDefault('m=>m.Id == 8');
+                if (o === null) output.append('NULL');
+                else output.append("Id = " + o.Id + ", Name = " + o.Name);
+                output.append("<br />");
+
+                //
+                //Skip & Take
+                //
+
+                query = source.Skip(3).Take(2);
+
+                output.append("<br />");
+                output.append('<b>Skip & Take</b>');
+                output.append("<br />");
+                query.forEach(function (o) {
+                    output.append("Id = " + o.Id + ", Name = " + o.Name);
+                    output.append("<br />");
+                });
+
+                //
+                //Count
+                //
+
+                var i = source.Count('m=>m.Id > 4');
+                output.append("<br />");
+                output.append('<b>Count</b>');
+                output.append("<br />");
+                output.append(i);
+                output.append("<br />");
+
+                //
+                //Any
+                //
+
+                output.append("<br />");
+                output.append('<b>Any</b>');
+                output.append("<br />");
+                output.append('m.Id > 4 = ' + source.Any('m=>m.Id > 4'));
+                output.append("<br />");
+                output.append('m.Id > 8 = ' + source.Any('m=>m.Id > 8'));
+                output.append("<br />");
+
+                //
+                //Select
+                //
+
+                query = petOwners.Select('m=>m.Pets');
+
+                output.append("<br />");
+                output.append('<b>Select</b>');
+                output.append("<br />");
+                query.forEach(function (o) {
+                    output.append(o.join());
+                    output.append("<br />");
+                });
+                output.append("<br />");
+
+                //
+                //Select Many
+                //
+
+                query = petOwners.SelectMany('m=>m.Pets');
+
+                output.append("<br />");
+                output.append('<b>Select Many</b>');
+                output.append("<br />");
+                query.forEach(function (o) {
+                    output.append(o);
+                    output.append("<br />");
+                });
+                output.append("<br />");
+
+                //
+                //Union
+                //
+
+                query = source.Union(target);
+
+                output.append("<br />");
+                output.append('<b>Union</b>');
+                output.append("<br />");
+                query.forEach(function (o) {
+                    output.append("Id = " + o.Id + ", Name = " + o.Name);
+                    output.append("<br />");
+                });
+                output.append("<br />");
+
+                //
+                //Reverse
+                //
+
+                query = source.Reverse();
+
+                output.append("<br />");
+                output.append('<b>Reverse</b>');
+                output.append("<br />");
+                query.forEach(function (o) {
+                    output.append("Id = " + o.Id + ", Name = " + o.Name);
+                    output.append("<br />");
+                });
+                output.append("<br />");
+
+                //
+                //Max
+                //
+
+                query = source.Max('m=>m.Id');
+
+                output.append("<br />");
+                output.append('<b>Max</b>');
+                output.append("<br />");
+                output.append(query);
+                output.append("<br />");
+
+                //
+                //Min
+                //
+
+                query = source.Min('m=>m.Id');
+
+                output.append("<br />");
+                output.append('<b>Min</b>');
+                output.append("<br />");
+                output.append(query);
+                output.append("<br />");
+
+                //
+                //Distinct
+                //
+
+                query = duplicates.Distinct();
+
+                output.append("<br />");
+                output.append('<b>Distinct</b>');
+                output.append("<br />");
+                query.forEach(function (o) {
+                    output.append("Id = " + o.Id + ", Name = " + o.Name);
+                    output.append("<br />");
+                });
+
+				//
+                //Zip
+                //
+
+                var numbers = (ArrayTs.Get)[ 1, 2, 3, 4 ];
+                var words = (ArrayTs.Get)[ "one", "two", "three" ];
+                var numbersAndWords = numbers.Zip(words, '(first, second) => first + " " + second');
+
+                output.append("<br />");
+                output.append('<b>Zip</b>');
+                output.append("<br />");
+                numbersAndWords.forEach(function (o) {
+                    output.append(o);
+                    output.append("<br />");
+                });
+
+				//
+                //InnerJoin
+                //
+
+                var joined = source.InnerJoin(child, 'm=>m.Id', 'm=>m.Id', '(source, child) => source.Name + " - " + child.Name');
+
+                output.append("<br />");
+                output.append('<b>InnerJoin</b>');
+                output.append("<br />");
+                joined.forEach(function (o) {
+                    output.append(o);
+                    output.append("<br />");
+                });
+				
+				console.log("\n\nGuessing.forEachMoistHavezWorkez\n\n");
+            });
+        </script>
+        <h1>ArrayTs Demo Page</h1>
+        <div><br /></div>
+        <div id="output"></div>
+        <div><br /></div>
+    </body>
+</html>

@@ -41,40 +41,40 @@
  * ***, Authors:*** [**`Jack Godwin`**](https://github.com/KodingSykosis) ***&***
  * [**`Ryan Mauldin`**](https://github.com/ryanmauldin)
  **/
-interface Array<T> {
-  Aggregate(func: Function, seed?: T): T;
-  All(predicate?: Function): boolean;
-  Any(predicate?: Function): boolean;
-  Average(): number;
-  Contains(value: any): boolean;
-  Count(predicate?: Function): number;
-  Distinct(): Array<T>;
-  ElementAt(index: number): any;
-  ElementAtOrDefault(index: number): any;
-  Except(array: Array<T>): Array<T>;
-  First(predicate?: Function): any;
-  FirstOrDefault(predicate?: Function): any;
-  GroupBy(predicate: Function, keyName: string, valName: string): Array<T>;
-  GroupJoin(inner: Array<T>, outerKey: Function, innerKey: Function, zipFn: Function): Array<T>;
-  InnerJoin(inner: Array<T>, outerKey: Function, innerKey: Function, zipFn: Function): Array<T>;
-  Intersect(array: Array<T>): Array<T>;
-  Last(predicate?: Function): any;
-  LastOrDefault(predicate: Function): any;
-  Max(selector: Function): number;
-  Min(selector: Function): number;
-  OrderBy(selector: Function): Array<T>;
-  OrderByDescending(selector: Function): Array<T>;
-  Select(selector: Function): Array<any>;
-  SelectMany(selector: Function): Array<any>;
-  SequenceEqual(array: Array<T>): boolean;
-  Single(): any;
-  SingleOrDefault(): any;
-  Skip(index: number): Array<T>;
-  SkipWhile(predicate: Function): Array<T>;
-  Sum(): number;
-  Take(count: number): Array<T>;
-  TakeWhile(predicate: Function): Array<T>;
-  Union(array: Array<T>): Array<T>;
-  Where(predicate: Function): Array<T>;
-  Zip(second: Array<T>, zipFunction: Function): Array<T>;
-}
+// interface Array<T> {
+//   Aggregate(func: Function, seed?: T): T;
+//   All(predicate?: Function): boolean;
+//   Any(predicate?: Function): boolean;
+//   Average(): number;
+//   Contains(value: any): boolean;
+//   Count(predicate?: Function): number;
+//   Distinct(): Array<T>;
+//   ElementAt(index: number): any;
+//   ElementAtOrDefault(index: number): any;
+//   Except(array: Array<T>): Array<T>;
+//   First(predicate?: Function): any;
+//   FirstOrDefault(predicate?: Function): any;
+//   GroupBy(predicate: Function, keyName: string, valName: string): Array<T>;
+//   GroupJoin(inner: Array<T>, outerKey: Function, innerKey: Function, zipFn: Function): Array<T>;
+//   InnerJoin(inner: Array<T>, outerKey: Function, innerKey: Function, zipFn: Function): Array<T>;
+//   Intersect(array: Array<T>): Array<T>;
+//   Last(predicate?: Function): any;
+//   LastOrDefault(predicate: Function): any;
+//   Max(selector: Function): number;
+//   Min(selector: Function): number;
+//   OrderBy(selector: Function): Array<T>;
+//   OrderByDescending(selector: Function): Array<T>;
+//   Select(selector: Function): Array<any>;
+//   SelectMany(selector: Function): Array<any>;
+//   SequenceEqual(array: Array<T>): boolean;
+//   Single(): any;
+//   SingleOrDefault(): any;
+//   Skip(index: number): Array<T>;
+//   SkipWhile(predicate: Function): Array<T>;
+//   Sum(): number;
+//   Take(count: number): Array<T>;
+//   TakeWhile(predicate: Function): Array<T>;
+//   Union(array: Array<T>): Array<T>;
+//   Where(predicate: Function): Array<T>;
+//   Zip(second: Array<T>, zipFunction: Function): Array<T>;
+// }
