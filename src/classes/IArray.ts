@@ -3,7 +3,7 @@ namespace ts {
     //declare var IArray: IArrayConstructor;
 
     /**
-  * **`ArrayTs<T>`** is a [TypeScript](http://www.typescriptlang.org/) class in the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+  * **`ArrayTs<T>`** is a [`TypeScript`](http://www.typescriptlang.org/) class in the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
   * *namespace*, which ***enhances*** the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
   * *type* by ***exposing*** *extension methods*, ***similar*** to the [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
   * *interface* in [`Microsoft's`](https://www.microsoft.com/en-us/) [`.NET Core`](https://docs.microsoft.com/en-us/dotnet/core/)
@@ -19,27 +19,94 @@ namespace ts {
   * for (const number of clonedNumbers) { console.log(number); }
   * ```
   **/
-    export class IArray<T> extends Array<T> implements ArrayTs<T>, IEnumerableArray<T>  {
+    //export class IArray<T> extends Array<T> implements ArrayTs<T>, IEnumerableArray<T>  {
+    export class IArray<T> extends Array<T> implements IArrayTs<T> {
         readonly prototype!: IArray<T>;
+        
+        [Symbol.species]: IArrayConstructor;
 
-        constructor(...args: Array<any>): IArray<T> {
-            super();
+        public constructor();
+        public constructor(arrayLength?: number);
+        public constructor(source: IArray<T>);
+        public constructor(source: Array<T>);
+        public constructor(source: any);
+        public constructor(...args: any) {
+            super()
             this.Clear();
+
+            const impliedType: string = this.GetGenericType();
+            if (IsNull(args || impliedType) || Contains(["undefined", "any"], impliedType)){
+                this.Set(new Array<any>());
+                return;
+            }
+
             for (var arg of args) {
-                if (typeof arg === "number") // check for arrayLength
-                    this.Set(new Array<T>(<number>arg));
-                else if (IsIArray(arg) || IsArray(arg) || this.IsArray(arg)) // check for sources
-                    this.Set(this.Cast<any>().Concat<any>(Convert<any>(arg)).Cast<T>());
+                if (typeof arg === "number") { // check for array length
+                    if (this.length === 0) {
+                        this.Set(new Array<any>(0));
+                    }
+                    else if (this.length > arg) {
+
+                    }
+                }
+                else if (IsIArray<any>(arg) || IsArray<any>(arg)) // check for sources
+                    this.Set(this.Cast<any>().Concat<any>(Convert<any>(arg)).Clone().Cast<T>());
             }
         }
 
-        new <T>(...args: Array<any>): IArray<T> {
-            this.Clear();
+        public new (): IArray<any>;
+        public new <T>(): IArray<T>;
+        public new <T>(arrayLength?: number): IArray<T>;
+        public new <T>(source: IArray<T>): IArray<T>;
+        public new <T>(source: Array<T>): IArray<T>;
+        public new <T>(source: any): IArray<T>;
+        public new <T>(...args: any): IArray<T> {
             return new IArray<T>(args);
-        };
+        }
 
-        public IsArray(args: any): args is IArray<any> {
-            return IsIArray<T>(args) && args! instanceof IArray;
+        // public new (arrayLength?: number | undefined): Array<any> {
+        //     return new Array<any>(arrayLength);
+        // }
+
+        [x: string]: T & any;
+        isArray(arg: any): arg is any[] {
+            return arg.IsArray();
+        }
+        // from<T>(arrayLike: ArrayLike<T>): T[];
+        // from<T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[];
+        // from<T>(iterable: ArrayLike<T> | Iterable<T>): T[];
+        // from<T, U>(iterable: ArrayLike<T> | Iterable<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[];
+        // from(iterable: any, mapfn?: any, thisArg?: any);
+        from(iterable: any, mapfn?: any, thisArg?: any): any {
+            return new IArray<any>(iterable).Cast<T>();
+        }
+        //of<T>(...items: T[]): T[];
+        of<T>(...items: T[]): T[] {
+            return new IArray<T>(items);
+        }
+        // [x: string]: T & IArray<any>;
+        // isArray<T>(arg: any): arg is Array<any> {
+        //     throw new Error("Method not implemented.");
+        // }
+        // prototype: any;
+        // from<T>(arrayLike: ArrayLike<T>): T[]{};
+        // from<T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[];
+        // from<T>(iterable: Iterable<T> | ArrayLike<T>): T[];
+        // from<T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[];
+        // from(iterable: any, mapfn?: any, thisArg?: any) {
+        //     throw new Error("Method not implemented.");
+        // }
+        // of<T>(...items: T[]): T[] {
+        //     throw new Error("Method not implemented.");
+        // }
+        
+
+        public IsArray<T>(): this is Array<T> {
+            return IsArray<T>(this) && this! instanceof Array;
+        }
+
+        public IsIArray<T>(): this is IArray<T> {
+            return IsIArray<T>(this) && this! instanceof IArray;
         }
 
         public Aggregate(predicate?: any, seed?: T): T {
@@ -47,16 +114,16 @@ namespace ts {
             if (IsNull(predicate)) throw Error("ArgumentNullException: predicate is null.");
             // Use seed as default return value for empty lists, otherwise throw an exception.
             if (!IsNull(seed)) {
-                if (this.Empty()) return seed!;
+                if (this.Any()) return seed!;
                 aggregateValue = seed!;
             } else {
-                if (this.Empty()) throw Error("InvalidOperationException: source contains no elements.");
+                if (this.Any()) throw Error("InvalidOperationException: source contains no elements.");
                     aggregateValue =this[0];
             }
-            const length: number = this.Length();
-            let compiledFunction: Function = CompileExpression(predicate);
-            for (var index = 1; index < length; index++)
-                aggregateValue = compiledFunction(aggregateValue, this[index]);
+
+            let expression: Function = CompileExpression(predicate);
+            for (var index = 1; index < this.length; index++)
+                aggregateValue = expression(aggregateValue, this[index]);
             return aggregateValue;
         }
 
@@ -71,9 +138,8 @@ namespace ts {
         }
 
         public Average(): number {
-            const length: number = this.length;
-            if (length < 1) return 0;
-            return this.Sum() / length;
+            if (this.length < 1) return 0;
+            return this.Sum() / this.length;
         }
 
         public Cast<TResult>(): IArray<TResult>{
@@ -108,14 +174,11 @@ namespace ts {
         // Excluding DefaultIfEmpty
 
         public Distinct(): IArray<T> {
-            const length: number = this.length;
-            if (length < 1) return this;
-
+            if (this.length < 1) return this;
             var sortedResults = this.Sort(Compare);
-            const sortedLength: number = sortedResults.Length();
             var results = new IArray<T>();
             results.push(sortedResults[0]);
-            for (var previousIndex = 0, currentIndex = 1; currentIndex < sortedLength; previousIndex++, currentIndex++) {
+            for (var previousIndex = 0, currentIndex = 1; currentIndex < sortedResults.length; previousIndex++, currentIndex++) {
                 var previous = sortedResults[previousIndex];
                 var current = sortedResults[currentIndex];
 
@@ -133,18 +196,19 @@ namespace ts {
         }
 
         public ElementAtOrDefault(index: any): T | null {
-            const length: number = this.length;
-            if (length === 0 || index < 0 || index - 1 > length) return null;
+            if (this.length === 0 || index < 0 || index - 1 > this.length) return null;
             return <T>this[index];
         }
 
-        public Empty(): boolean {
-            return this.length === 0;
+        // From .net static array
+        // // https://docs.microsoft.com/en-us/dotnet/api/system.array?view=netframework-4.8
+        public static Empty<T>(): IArray<T> {
+            return new IArray<T>();
         }
 
         public Except(target: any): IArray<T> {
             const exceptTarget: IArray<T> = Convert<T>(target);
-            if (this.Empty() || exceptTarget.Empty()) return this;
+            if (this.Any() || exceptTarget.Any()) return this;
 
             const length: number = this.length;
             const results: IArray<T> = new IArray<T>();
@@ -155,6 +219,17 @@ namespace ts {
 
             return results;
         }
+
+        // public forEach(callbackfn: (value: T, index: number, array: IArray<T>) => void, thisArg?: any): void {
+        //     const thisTypedArg: IArray<T> = <IArray<T>>thisArg;
+        //     // const thisArgArray: Array<T> = thisTypedArg.ToArray();
+        //     //var length = thisArgArray.length;
+        //     const length: number = thisArg.Length();
+        //     for(var index = 0; index < length; index++) {
+        //         const value: T = <T>thisArg[index];
+        //         callbackfn(value, index, thisArg);
+        //     }
+        // };
 
         public First(predicate?: Function): T {
             var result = this.FirstOrDefault(predicate);
@@ -188,8 +263,8 @@ namespace ts {
                 return results;
             }
 
-            const compiledFunction: Function = CompileExpression(predicate);
-            const keys: IArray<T> = this.Select<T>(compiledFunction).Distinct();
+            const expression: Function = CompileExpression(predicate);
+            const keys: IArray<T> = this.Select<T>(expression).Distinct();
             const length: number = keys.Length();
 
             for (var index = 0; index < length; index++) {
@@ -198,7 +273,7 @@ namespace ts {
                 SetProperty(obj, keyName, <any>0);
                 valueName = valueName || "value";
                 const value: IArray<T> = this.Where(function(item: any) {
-                    return compiledFunction(item) === keys[index];
+                    return expression(item) === keys[index];
                 });
                 SetProperty(obj, valueName, value);
                 results.Push(obj);
@@ -209,14 +284,14 @@ namespace ts {
 
         GroupJoin<TResult>(source: any, outerKey: any, innerKey: any, zipFunction: Function): IArray<TResult> {
             const length: number = this.Length();
-            const oKeyCompiledFunction: Function = CompileExpression(outerKey);
-            const iKeyCompiledFunction: Function = CompileExpression(innerKey);
+            const oKeyExpression: Function = CompileExpression(outerKey);
+            const iKeyExpression: Function = CompileExpression(innerKey);
             const results: IArray<TResult> = new IArray<TResult>();
 
             for (var index = 0; index < length; index++) {
                 var outerItem = this[index];
                 var matches = (Convert<TResult>(source)).Where(function(item: any) {
-                    return Compare(oKeyCompiledFunction(outerItem, item), iKeyCompiledFunction(item, outerItem)) === 0;
+                    return Compare(oKeyExpression(outerItem, item), iKeyExpression(item, outerItem)) === 0;
                 });
 
                 results.Push(matches);
@@ -232,18 +307,18 @@ namespace ts {
         // results ... (7) [1, 2, 3, 4, 1, 2, 3]
         InnerJoin<TResult>(source: any, outerKey: any, innerKey: any, zipFunction: any): IArray<TResult> {
             const length: number = this.Length();
-            const oKeyCompiledFunction: Function = CompileExpression(outerKey);
-            const iKeyCompiledFunction: Function = CompileExpression(innerKey);
-            let results: IArray<TResult> = new IArray<TResult>();
+            const oKeyExpression: Function = CompileExpression(outerKey);
+            const iKeyExpression: Function = CompileExpression(innerKey);
+            let results: IArray<number> = new IArray<number>();
             for (var index = 0; index < length; index++) {
                 var outerItem = this[index];
                 var matches = (Convert<TResult>(source)).Where(function(item: any) {
-                    return Compare(oKeyCompiledFunction(outerItem), iKeyCompiledFunction(item)) === 0;
+                    return Compare(oKeyExpression(outerItem), iKeyExpression(item)) === 0;
                 });
 
                 const resultsLength: number = results.Length();
                 const applyArray: IArray<any> = Convert<any>([resultsLength, 0]).Concat<any>(matches).Cast<number>();
-                results = results.Splice(applyArray.Length(), resultsLength);
+                results = results.Splice(applyArray.length, resultsLength);
             }
 
             return this.Zip<TResult>(results, zipFunction);
@@ -256,7 +331,7 @@ namespace ts {
             const length: number = instanceIArray.Length();
             const sourceIArray: IArray<any> = Convert<any>(source);
             const sourceLength: number = sourceIArray.Length();
-            if (instanceIArray.Empty() || sourceIArray.Empty()) return results;
+            if (instanceIArray.Any() || sourceIArray.Any()) return results;
             for (var sourceIndex = 0; sourceIndex < sourceLength; sourceIndex++)
                 for (var index = 0; index < length; index++)
                     if (Compare(this[index], source[sourceIndex]) === 0)
@@ -298,8 +373,8 @@ namespace ts {
 
         public OrderBy(predicate?: any) {
             if (IsNull(predicate)) return Convert<T>(this.Sort(Compare).ToArray());
-            var compiledFunction = CompileExpression(predicate);
-            return Convert<T>(this.Sort((a: T, b: T) => Compare(compiledFunction(a), compiledFunction(b))));
+            var expression = CompileExpression(predicate);
+            return Convert<T>(this.Sort((a: T, b: T) => Compare(expression(a), expression(b))));
         }
 
         public OrderByDescending(predicate?: any) {
@@ -323,26 +398,21 @@ namespace ts {
             if (IsNull(predicate)) return this.Cast<TResult>();
             const length: number = this.length;
             const results: IArray<TResult> = new IArray<TResult>();
-            const compiledFunction: Function = CompileExpression(predicate);
+            const expression: Function = CompileExpression(predicate);
 
             for (var index = 0; index < length; index++)
-                results.Push(compiledFunction(this[index]));
+                results.Push(expression(this[index]));
 
             return results;
         }
 
         public SelectMany<TResult>(predicate?: any): IArray<TResult>{
-            if (typeof predicate === "undefined") return this.Cast<TResult>();
-                var results = this.Select(predicate);
-                const length: number = results.Length();
-                var array = <any>[];
-                for (var index = 0; index < length; index++){
-                const resultsLength: number = array.length;
-                const applyArray: IArray<any> = Convert<any>([resultsLength, 0]).Concat<any>(results[index]).Cast<number>();
-                this.Splice(resultsLength, 0).Concat(applyArray);
-            }
-
-            return array;
+            if (IsNull(predicate)) return this.Cast<TResult>();
+            let selectResults: IArray<T> = this.Select(predicate);
+            let results: IArray<TResult> = new IArray<TResult>();
+            for (var index = 0; index < selectResults.length; index++)
+                results.Splice(0, 0, selectResults[index]);
+            return results;
         }
 
         public SequenceEqual(source?: any): boolean {
@@ -351,19 +421,23 @@ namespace ts {
             const length: number = this.Length();
             for (var index = 0; index < length; index++)
             if (Compare(this[index], source[index]) !== 0) return false;
-
             return true;
         }
 
         public Set(source?: any): number {
-            if (IsNull(source)){
-                this.Splice(0, this.Length());
-                return this.Length();
+            if (this.length > 0) {
+                this.splice(0, this.length);
             }
 
-            Convert<T>(source).forEach(element => {
-                this.Push(element);
-            });
+            if (IsNull(source))
+                return this.length;
+
+            const sourceIArray: IArray<T> = Convert<T>(source);
+            if (sourceIArray.length > 0) {
+                sourceIArray.forEach(element => {
+                    this.push(element);
+                });
+            }
 
             return this.length;
         }
@@ -384,11 +458,11 @@ namespace ts {
         }
 
         public SkipWhile(predicate?: any): IArray<T> {
-            var compiledFunction = CompileExpression(predicate);
+            var expression = CompileExpression(predicate);
             var results = new IArray<T>();
             const length: number = this.Length();
             for (var index = 0; index < length; index++)
-            if (compiledFunction(this[index]) !== true)
+            if (expression(this[index]) !== true)
                 results.Push(this[index]);
             return results;
         }
@@ -420,16 +494,18 @@ namespace ts {
         // matches = [1, 2, 3];
         // results.splice.apply(results, [results.length, 0].concat(matches));
         // results ... (7) [1, 2, 3, 4, 1, 2, 3]
-        public Splice(start: number, deleteCount: number, ...items: any): IArray<T> {
-            let results: Array<number> = this.Cast<number>();
-            const length: number = results.length;
-            let mergeItems: IArray<number> = Convert<number>(items);
-            mergeItems = Convert<number>([length, <number>0].concat(new Array<number>()));
-            if (IsNull(mergeItems))
-                results = results.splice.apply(results, start, deleteCount);
-            else
-                results = results.splice.apply(mergeItems, start, deleteCount);
-            return Convert<T>(results);
+        // var args = [start, number].concat(newItemsArray);
+        // Array.prototype.splice.apply(theArray, args);
+        /**
+         * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+         * @param start The zero-based location in the array from which to start removing elements.
+         * @param deleteCount The number of elements to remove.
+         * @param items Elements to insert into the array in place of the deleted elements.
+         **/
+        public Splice(start: number, end: number, ...items: any): IArray<T> {
+            if (IsNull(items)) return Convert<T>(this.splice(start, end));
+            const itemsArray: Array<T> = Convert<any>(items).Cast<T>().ToArray();
+            return Convert<T>(this.splice(start, end, ...itemsArray));
         }
 
         public Sum() {
@@ -457,12 +533,12 @@ namespace ts {
 
         public TakeWhile(predicate?: any): IArray<T> {
             if (IsNull(predicate)) return this;
-            var compiledFunction = CompileExpression(predicate!);
+            var expression = CompileExpression(predicate!);
             const results: IArray<T> = new IArray<T>();
             const length: number = this.Length();
             for (let index: number = 0; index < length; index++) {
                 const item = this[index];
-                if (compiledFunction(item) !== true) return results;
+                if (expression(item) !== true) return results;
                 results.Push(item);
             }
 
@@ -481,9 +557,9 @@ namespace ts {
         public Where(predicate?: any): IArray<T> {
             const length: number = this.Length();
             const results: IArray<T> = new IArray<T>();
-            const compiledFunction: Function = CompileExpression(predicate);
+            const expression: Function = CompileExpression(predicate);
             for (var index = 0; index < length; index++)
-                if (compiledFunction(this[index]) === true)
+                if (expression(this[index]) === true)
                     results.push(this[index]);
             return results;
         }
@@ -509,14 +585,13 @@ namespace ts {
         public Zip<TResult>(source?: any, predicate?: any): IArray<TResult> {
             const instanceIArray: IArray<T> = this;
             if (IsNull(predicate)) return instanceIArray.Cast<TResult>();
-            const length: number = instanceIArray.Length();
-            let compiledFunction: Function = CompileExpression(predicate);
+            let expression: Function = CompileExpression(predicate);
             const sourceIArray: IArray<any> = Convert<any>(source);
             const sourceLength: number = sourceIArray.Length();
             const results: IArray<any> = new IArray<any>();
-            for (var index = 0; index < length; index++) {
+            for (var index = 0; index < instanceIArray.length; index++) {
                 if (sourceLength <= index) return results;
-                const result: any = compiledFunction(instanceIArray[index], sourceIArray[index])
+                const result: any = expression(instanceIArray[index], sourceIArray[index])
                 results.Push(result);
             }
             return results;

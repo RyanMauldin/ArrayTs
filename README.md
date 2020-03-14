@@ -13,7 +13,6 @@ being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/Arra
 *type*. ***See usage:***
 
 ```typescript
-/// The following code is subject to change
 const numbers: Array<number> = [ 1, 2, 3, 4 ];
 let clonedNumbers: ts.IArray<number> = new ts.IArray<number>();
 if (!ts.IsNullOrEmpty(numbers)) clonedNumbers = (<ts.IArray<number>>numbers).Clone();

@@ -1,6 +1,5 @@
 namespace ts {
-    // Comparison and compilation expressions
-
+  // Validation expressions
   export function IsNull(value?: any): boolean {
     return typeof value === "undefined" || value === null;
   };
@@ -9,18 +8,14 @@ namespace ts {
     return typeof value === "undefined" || value === null || value!.length <= 0;
   };
 
-  export function GetGenericType<T>(): string {
-    const genericType: T = <T>{};
-    return typeof genericType;
-  };
-
-  export function IsArray(source?: any): boolean {
-    return Array.isArray(source);
+  export function IsArray<T>(source?: any): boolean {
+    return !IsNull(source) && Array.isArray(source!)
+      && GetGenericType<T>() === Convert<T>(source!).GetGenericType();
   };
 
   export function IsIArray<T>(source?: any): boolean {
     return !IsNull(source) && source! instanceof IArray
-      && GetGenericType<T>() === (<IArray<T>>source!).GetGenericType();
+      && GetGenericType<T>() === (source!).GetGenericType();
   };
 
   export function IsFunction(func?: any): boolean {
@@ -30,11 +25,11 @@ namespace ts {
   export function Contains(source?: any, value?: any): boolean {
     if (IsNull(source)) return false;
 
-    if (IsIArray(source!))
+    if (IsIArray<any>(source!))
       for (let element of (<IArray<any>>source!))
         if (Compare(element, value) === 0) return true;
 
-    if (IsArray(source!))
+    if (IsArray<any>(source!))
       for (let element of (<Array<any>>source!))
         if (Compare(element, value) === 0) return true;
 
@@ -55,28 +50,6 @@ namespace ts {
     }
 
     return Compare(source!, value) === 0;
-  };
-
-  export function DeepClone<T>(source: any): any {
-    if (IsNull(source)) return source;
-    const sourceType: string = typeof source!;
-    if (IsNull(sourceType) || IsFunction(source!) || source! instanceof Date
-      || Contains(["string", "number", "boolean"], sourceType!))
-      return source!;
-    
-    if (sourceType! === "object") {
-      var result = new Array<any>();
-
-      Enumerator(source!, function(value: any) {
-        var sourceClone = DeepClone(value);
-        result.push(sourceClone);
-        return true;
-      });
-
-      return result;
-    }
-
-    return source!;
   };
 
   export function Compare(source: any, target: any): number {
@@ -131,60 +104,4 @@ namespace ts {
 
     throw new Error("ArgumentException: Unable to compare objects.");
   };
-
-  export function CompileExpression(expression: any): Function {
-    if (IsNull(expression))
-      throw new Error("ArgumentNullException: expression has no value.");
-    if (IsFunction(expression!)) return expression;
-    const expressionType: string = typeof expression!;
-    if (Contains(["number", "object"], expressionType))
-      throw new Error("ArgumentException: expression is of unexpected type.");
-
-    var parts = expression!.split("=>");
-    var args = parts.length > 0 ? parts.shift().trim().replace(/\(|\)/g, "") : null;
-    var func = parts.length > 0 ? parts.join("=>").trim() : null;
-
-    if (IsNull(args) || IsNull(func))
-      throw new Error("ArgumentException: expression is invalid.");
-
-    return new Function(args, "return (" + func + ");");
-  };
-
-  export function Enumerator(source: any, func: Function) {
-    const length: number = source.length;
-    if (IsArray(source))
-      for (var index = 0; index < length; index++)
-        if (func(source[index], index) === false) return;
-        else for (var key in source)
-          if (func(source[key], key) === false) return;
-  };
-
-  export function Convert<T>(source: any): IArray<T> {
-    if (IsNull(source)) return new IArray<T>();
-    if (IsIArray<T>(source) || IsArray(source) || source.IsArray()) return <IArray<T>>source;
-    const results: IArray<T> = new IArray<T>();
-
-    if (typeof source === "object") {
-      const arrayResults: Array<T> = new Array<T>();
-
-      Enumerator(source, function(element: any, key: any) {
-        arrayResults[key] = <T>element;
-      });
-      
-      for(const element of arrayResults)
-        results.Push(<T>element);
-
-      return results;
-    }
-
-    throw new Error("InvalidArgument: value has an unexpected value.");
-  };
-
-  export function GetProperty<T extends IDictionary<K>, K extends keyof T>(obj: T, key: K): T[K] {
-    return obj[key];
-  }
-
-  export function SetProperty<T extends IDictionary<K>, K extends keyof T>(obj: T, key: K, value: any): void {
-    obj[key] = value;
-  }
 }
