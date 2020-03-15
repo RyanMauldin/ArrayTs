@@ -1,5 +1,12 @@
-namespace ts {
+/// <reference path="../types/IArrayTs.ts" />
+/// <reference path="../functions/GlobalComparison.ts" />
+/// <reference path="../functions/GlobalConversion.ts" />
+/// <reference path="../functions/GlobalDictionary.ts" />
+/// <reference path="../functions/GlobalEnumerator.ts" />
+/// <reference path="../functions/GlobalExpression.ts" />
 
+namespace ts {
+    
     //declare var IArray: IArrayConstructor;
 
     /**
@@ -21,55 +28,64 @@ namespace ts {
   **/
     //export class IArray<T> extends Array<T> implements ArrayTs<T>, IEnumerableArray<T>  {
     export class IArray<T> extends Array<T> implements IArrayTs<T> {
+        [Symbol.species]: IArray<T>;
         readonly prototype!: IArray<T>;
-        
-        [Symbol.species]: IArrayConstructor;
 
-        public constructor();
-        public constructor(arrayLength?: number);
+        // static new <T>(): IArray<T> {
+        //     return Object.create(IArray.prototype);
+        // }
+
+        public new <T>(source: number): IArray<T>;
+        public new <T>(source?: number | undefined): IArray<T>;
+        public new <T>(source: IArray<T>): IArray<T>;
+        public new <T>(source: IArray<any>): IArray<T>;
+        public new <T>(source: Array<T>): IArray<T>;
+        public new <T>(source: Array<any>): IArray<T>;
+        public new <T>(source: ArrayLike<T>): IArray<T>;
+        public new <T>(source: ArrayLike<any>): IArray<T>;
+        public new <T>(source: Iterable<T>): IArray<T>;
+        public new <T>(source: Iterable<any>): IArray<T>;
+        public new <T>(source: any): IArray<T>;
+        public new <T>(source?: any): IArray<T> {
+            const sourceIArray: IArray<T> = (<IArray<any>>Object.create(IArray.prototype)).Cast<T>();
+            sourceIArray.Set(source);
+            return sourceIArray;
+        }
+
+        public constructor(source: number);
+        public constructor(source?: number | undefined);
         public constructor(source: IArray<T>);
+        public constructor(source: IArray<any>);
         public constructor(source: Array<T>);
+        public constructor(source: Array<any>);
+        public constructor(source: ArrayLike<T>);
+        public constructor(source: ArrayLike<any>);
+        public constructor(source: Iterable<T>);
+        public constructor(source: Iterable<any>);
         public constructor(source: any);
-        public constructor(...args: any) {
-            super()
-            this.Clear();
-
-            const impliedType: string = this.GetGenericType();
-            if (IsNull(args || impliedType) || Contains(["undefined", "any"], impliedType)){
-                this.Set(new Array<any>());
+        public constructor(source?: any) {
+            super();
+            if (this.length > 0) this.splice(0, this.length);
+            if (IsNull(source)) return;
+            if (Number.isInteger(source!)){
+                const arrayLength: number = (<number>source!);
+                if (arrayLength <= 0) return;
+                this.splice(0, 0, ...new Array<T>(arrayLength));
                 return;
             }
 
-            for (var arg of args) {
-                if (typeof arg === "number") { // check for array length
-                    if (this.length === 0) {
-                        this.Set(new Array<any>(0));
-                    }
-                    else if (this.length > arg) {
-
-                    }
-                }
-                else if (IsIArray<any>(arg) || IsArray<any>(arg)) // check for sources
-                    this.Set(this.Cast<any>().Concat<any>(Convert<any>(arg)).Clone().Cast<T>());
+            if (IsIArray<T>(source!) || IsArray<T>(source!) || IsArrayLike<T>(source!) || IsIterable<T>(source!)) {
+                this.splice(0, 0, ...Convert<T>(source).ToArray());
+                return;
             }
-        }
 
-        public new (): IArray<any>;
-        public new <T>(): IArray<T>;
-        public new <T>(arrayLength?: number): IArray<T>;
-        public new <T>(source: IArray<T>): IArray<T>;
-        public new <T>(source: Array<T>): IArray<T>;
-        public new <T>(source: any): IArray<T>;
-        public new <T>(...args: any): IArray<T> {
-            return new IArray<T>(args);
+            // attempt unknown casting or array types IArray<any>, Array<any>, ArrayLike<any>, Iterable<any>
+            this.splice(0, 0, ...Convert<any>(source).Cast<T>().ToArray());
         }
-
-        // public new (arrayLength?: number | undefined): Array<any> {
-        //     return new Array<any>(arrayLength);
-        // }
 
         [x: string]: T & any;
-        isArray(arg: any): arg is any[] {
+        
+        isArray(arg: any): arg is IArray<any> {
             return arg.IsArray();
         }
         // from<T>(arrayLike: ArrayLike<T>): T[];
@@ -77,12 +93,12 @@ namespace ts {
         // from<T>(iterable: ArrayLike<T> | Iterable<T>): T[];
         // from<T, U>(iterable: ArrayLike<T> | Iterable<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[];
         // from(iterable: any, mapfn?: any, thisArg?: any);
-        from(iterable: any, mapfn?: any, thisArg?: any): any {
-            return new IArray<any>(iterable).Cast<T>();
+        from(iterable: any, mapfn?: any, thisArg?: any): any[] {
+            return new IArray<any>(iterable).Cast<T>().ToArray();
         }
         //of<T>(...items: T[]): T[];
         of<T>(...items: T[]): T[] {
-            return new IArray<T>(items);
+            return new IArray<T>(items).ToArray();
         }
         // [x: string]: T & IArray<any>;
         // isArray<T>(arg: any): arg is Array<any> {

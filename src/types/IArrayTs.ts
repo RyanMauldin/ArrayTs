@@ -1,3 +1,7 @@
+/// <reference path="./IJsArray.ts" />
+/// <reference path="../Interfaces/IEnumerableArray.ts" />
+/// <reference path="../Interfaces/IDictionary.ts" />
+/// <reference path="../Interfaces/IArrayIndexer.ts" />
 
 namespace ts {
     /**
@@ -21,9 +25,8 @@ namespace ts {
      * ```
      **/
     export type IArrayTs<T> =
-        IEnumerableArray<T>
+        IEnumerableArray<T> //IArrayConstructor<T>
       & IDictionary<T>
       & IJsArray<T>
-      & IArrayIndexer
-      & IArrayConstructor;
+      & IArrayIndexer;
 }

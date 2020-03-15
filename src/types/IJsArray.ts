@@ -1,3 +1,8 @@
+/// <reference path="../Interfaces/IJsArrayEs5.ts" />
+/// <reference path="../Interfaces/IJsArrayEs2015Core.ts" />
+/// <reference path="../Interfaces/IJsArrayEs2015Iterable.ts" />
+/// <reference path="../Interfaces/IJsArrayEs2015WellKnown.ts" />
+/// <reference path="../Interfaces/IJsArrayIndexer.ts" />
 
 namespace ts {
     /**
@@ -14,7 +19,8 @@ namespace ts {
         IJsArrayEs5<T>
         & IJsArrayEs2015Core<T>
         & IJsArrayEs2015Iterable<T>
-        & IJsArrayEs2015WellKnown<T>;
+        & IJsArrayEs2015WellKnown<T>
+        & IJsArrayIndexer;
         // TODO: https://github.com/microsoft/TypeScript/blob/master/lib/lib.es2016.array.include.d.ts
         // TODO: https://github.com/microsoft/TypeScript/blob/master/lib/lib.es2019.array.d.ts
 

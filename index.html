@@ -21,38 +21,42 @@
 			
             ready(function () {
                 var output = document.getElementById("output");
-                var source = (new ArrayTs.Get())[{ Id: 1, Name: 'Item 1' },
+                var source = new ts.IArray([
+                    { Id: 1, Name: 'Item 1' },
                     { Id: 2, Name: 'Item 2' },
                     { Id: 3, Name: 'Item 3' },
                     { Id: 4, Name: 'Item 4' },
                     { Id: 5, Name: 'Item 5' },
                     { Id: 6, Name: 'Item 6' },
-                    { Id: 7, Name: 'Item 7' }];
-                var target = (ArrayTs.Get)[{ Id: 8, Name: 'Item 8' },
+                    { Id: 7, Name: 'Item 7' }]);
+                var target = new ts.IArray([
+                    { Id: 8, Name: 'Item 8' },
                     { Id: 9, Name: 'Item 9' },
                     { Id: 10, Name: 'Item 10' },
                     { Id: 11, Name: 'Item 11' },
                     { Id: 12, Name: 'Item 12' },
                     { Id: 13, Name: 'Item 13' },
-                    { Id: 14, Name: 'Item 14' }];
-                var child = (ArrayTs.Get)[{ Id: 1, Name: 'Item 8' },
+                    { Id: 14, Name: 'Item 14' }]);
+                var child = new ts.IArray([
+                    { Id: 1, Name: 'Item 8' },
                     { Id: 2, Name: 'Item 9' },
                     { Id: 3, Name: 'Item 10' },
                     { Id: 4, Name: 'Item 11' },
                     { Id: 5, Name: 'Item 12' },
                     { Id: 6, Name: 'Item 13' },
-                    { Id: 7, Name: 'Item 14' }];
+                    { Id: 7, Name: 'Item 14' }]);
 
-                var petOwners = (ArrayTs.Get)[
+                var petOwners = new ts.IArray([
                     { Name: "Higa, Sidney", Pets: ["Scruffy", "Sam"] },
                     { Name: "Ashkenazi, Ronen", Pets: ["Walker", "Sugar"] },
                     { Name: "Price, Vernette", Pets: ["Scratches", "Diesel"] }
-                ];
+                ]);
 
-                var duplicates = (ArrayTs.Get)[{ Id: 8, Name: 'Item 8' },
+                var duplicates = new ts.IArray([
+                    { Id: 8, Name: 'Item 8' },
                     { Id: 9, Name: 'Item 9' },
                     { Id: 10, Name: 'Item 10' },
-                    { Id: 10, Name: 'Item 10' }];
+                    { Id: 10, Name: 'Item 10' }]);
 
                 //
                 //Where & OrderByDesc
@@ -247,8 +251,8 @@
                 //Zip
                 //
 
-                var numbers = (ArrayTs.Get)[ 1, 2, 3, 4 ];
-                var words = (ArrayTs.Get)[ "one", "two", "three" ];
+                var numbers = new ts.IArray([ 1, 2, 3, 4 ]);
+                var words = new ts.IArray([ "one", "two", "three" ]);
                 var numbersAndWords = numbers.Zip(words, '(first, second) => first + " " + second');
 
                 output.append("<br />");
@@ -273,7 +277,7 @@
                     output.append("<br />");
                 });
 				
-				console.log("\n\nGuessing.forEachMoistHavezWorkez\n\n");
+				console.log("\n\nYou made it here!\n\n");
             });
         </script>
         <h1>ArrayTs Demo Page</h1>

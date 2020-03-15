@@ -13,10 +13,20 @@ namespace ts {
       && GetGenericType<T>() === Convert<T>(source!).GetGenericType();
   };
 
+  export function IsArrayLike<T>(source?: any): source is ArrayLike<T> {
+    return !IsNull(source)
+      && GetGenericType<T>() === (source!).GetGenericType();
+  }
+
   export function IsIArray<T>(source?: any): boolean {
     return !IsNull(source) && source! instanceof IArray
       && GetGenericType<T>() === (source!).GetGenericType();
   };
+
+  export function IsIterable<T>(source?: any): source is Iterable<T> {
+    return !IsNull(source)
+      && GetGenericType<T>() === (source!).GetGenericType();
+  }
 
   export function IsFunction(func?: any): boolean {
     return !IsNull(func) && typeof func! === "function";
