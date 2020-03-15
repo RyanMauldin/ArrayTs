@@ -114,11 +114,16 @@ namespace ts {
         if (sort === -1) return false;
       });
 
-      return result.reduce(function(previous: any, current: any) {
-        if (previous === current) return previous;
-        var sum = previous + current;
-        return sum === 0 ? -1 : sum;
-      });
+      if (result.length > 0){
+        return result.reduce(function(previous: any, current: any) {
+          if (previous === current) return previous;
+          var sum = previous + current;
+          return sum === 0 ? -1 : sum;
+        });
+      }
+      else{
+        return 0;
+      }
     }
 
     throw new Error("ArgumentException: Unable to compare objects.");

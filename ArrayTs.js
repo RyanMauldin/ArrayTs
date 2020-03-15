@@ -122,12 +122,17 @@ var ts;
                 if (sort === -1)
                     return false;
             });
-            return result.reduce(function (previous, current) {
-                if (previous === current)
-                    return previous;
-                var sum = previous + current;
-                return sum === 0 ? -1 : sum;
-            });
+            if (result.length > 0) {
+                return result.reduce(function (previous, current) {
+                    if (previous === current)
+                        return previous;
+                    var sum = previous + current;
+                    return sum === 0 ? -1 : sum;
+                });
+            }
+            else {
+                return 0;
+            }
         }
         throw new Error("ArgumentException: Unable to compare objects.");
     }
@@ -299,14 +304,16 @@ var ts;
         if (ts.IsNull(source) || ts.IsNull(func))
             return;
         const length = source.length;
-        if (ts.IsArray(source))
+        if (ts.IsIArray(source) || ts.IsArray(source) || ts.IsArrayLike(source) || ts.IsIterable(source)) {
             for (var index = 0; index < length; index++)
                 if (func(source[index], index) === false)
                     return;
-                else
-                    for (var key in source)
-                        if (func(source[key], key) === false)
-                            return;
+        }
+        else {
+            for (var key in source)
+                if (func(source[key], key) === false)
+                    return;
+        }
     }
     ts.Enumerator = Enumerator;
     ;

@@ -207,7 +207,7 @@ namespace ts {
                 var current = sortedResults[currentIndex];
 
                 if (Compare(current, previous) !== 0)
-                results.push(current);
+                    results.push(current);
             }
 
             return results;
