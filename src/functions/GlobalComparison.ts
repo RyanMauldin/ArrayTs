@@ -10,22 +10,22 @@ namespace ts {
 
   export function IsArray<T>(source?: any): boolean {
     return !IsNull(source) && Array.isArray(source!)
-      && GetGenericType<T>() === Convert<T>(source!).GetGenericType();
+      && GetGenericType<T>() === ConvertArray<T>(<Array<T>>source!).GetGenericType();
   };
 
   export function IsArrayLike<T>(source?: any): source is ArrayLike<T> {
     return !IsNull(source)
-      && GetGenericType<T>() === (source!).GetGenericType();
+      && GetGenericType<T>() === ConvertArrayLike<T>(<ArrayLike<T>>source!).GetGenericType();
   }
 
   export function IsIArray<T>(source?: any): boolean {
     return !IsNull(source) && source! instanceof IArray
-      && GetGenericType<T>() === (source!).GetGenericType();
+      && GetGenericType<T>() === ConvertIArray<T>(<IArray<T>>source!).GetGenericType();
   };
 
   export function IsIterable<T>(source?: any): source is Iterable<T> {
     return !IsNull(source)
-      && GetGenericType<T>() === (source!).GetGenericType();
+      && GetGenericType<T>() === ConvertIterable<T>(<Iterable<T>>source!).GetGenericType();
   }
 
   export function IsFunction(func?: any): boolean {
@@ -60,6 +60,15 @@ namespace ts {
     }
 
     return Compare(source!, value) === 0;
+  };
+
+  export function ContainsValue<T>(source?: IArray<T> | Array<T>, value?: T): boolean {
+    if (IsNull(source)) return false;
+
+    for (var element of source!)
+        if (Compare(element, value) === 0) return true;
+
+    return false;
   };
 
   export function Compare(source: any, target: any): number {

@@ -5,7 +5,7 @@ namespace ts {
             throw new Error("ArgumentNullException: expression has no value.");
         if (IsFunction(expression!)) return expression;
         const expressionType: string = typeof expression!;
-        if (Contains(["number", "object"], expressionType))
+        if (ContainsValue(["number", "object"], expressionType))
             throw new Error("ArgumentException: expression is of unexpected type.");
 
         var parts = expression!.split("=>");

@@ -23,24 +23,24 @@ var ts;
     ;
     function IsArray(source) {
         return !IsNull(source) && Array.isArray(source)
-            && ts.GetGenericType() === ts.Convert(source).GetGenericType();
+            && ts.GetGenericType() === ts.ConvertArray(source).GetGenericType();
     }
     ts.IsArray = IsArray;
     ;
     function IsArrayLike(source) {
         return !IsNull(source)
-            && ts.GetGenericType() === (source).GetGenericType();
+            && ts.GetGenericType() === ts.ConvertArrayLike(source).GetGenericType();
     }
     ts.IsArrayLike = IsArrayLike;
     function IsIArray(source) {
         return !IsNull(source) && source instanceof ts.IArray
-            && ts.GetGenericType() === (source).GetGenericType();
+            && ts.GetGenericType() === ts.ConvertIArray(source).GetGenericType();
     }
     ts.IsIArray = IsIArray;
     ;
     function IsIterable(source) {
         return !IsNull(source)
-            && ts.GetGenericType() === (source).GetGenericType();
+            && ts.GetGenericType() === ts.ConvertIterable(source).GetGenericType();
     }
     ts.IsIterable = IsIterable;
     function IsFunction(func) {
@@ -77,6 +77,16 @@ var ts;
         return Compare(source, value) === 0;
     }
     ts.Contains = Contains;
+    ;
+    function ContainsValue(source, value) {
+        if (IsNull(source))
+            return false;
+        for (var element of source)
+            if (Compare(element, value) === 0)
+                return true;
+        return false;
+    }
+    ts.ContainsValue = ContainsValue;
     ;
     function Compare(source, target) {
         const sourceType = typeof source;
@@ -133,8 +143,10 @@ var ts;
             // Try to cast individual elements.
             const sourceAnyIArray = source;
             if (sourceAnyIArray.IsIArray()) {
-                const sourceIArray = sourceAnyIArray.Cast();
-                return sourceIArray;
+                const sourceIArray = ConvertIArray(sourceAnyIArray).Cast();
+                if (sourceIArray.IsIArray() && sourceIArray.IsArray())
+                    return sourceIArray;
+                throw new Error("InvalidArgument: source has an unexpected value.");
             }
             // Try to cast whole type.
             return source;
@@ -143,11 +155,7 @@ var ts;
             // Try to cast individual elements.
             const sourceAnyArray = source;
             if (ts.IsArray(sourceAnyArray)) {
-                const sourceIArray = new ts.IArray();
-                for (var index = 0; index < sourceAnyArray.length; index++) {
-                    const element = sourceAnyArray[index];
-                    sourceIArray.push(element);
-                }
+                const sourceIArray = ConvertArray(sourceAnyArray).Cast();
                 if (sourceIArray.IsIArray() && sourceIArray.IsArray())
                     return sourceIArray;
                 throw new Error("InvalidArgument: source has an unexpected value.");
@@ -155,24 +163,103 @@ var ts;
             // Try to cast whole type.
             return source;
         }
-        // Try to clone object keys.
-        const results = new ts.IArray();
+        if (ts.IsArrayLike(source)) {
+            // Try to cast individual elements.
+            const sourceAnyArray = source;
+            if (ts.IsArrayLike(sourceAnyArray)) {
+                const sourceIArray = ConvertArrayLike(sourceAnyArray).Cast();
+                if (sourceIArray.IsIArray() && sourceIArray.IsArray())
+                    return sourceIArray;
+                throw new Error("InvalidArgument: source has an unexpected value.");
+            }
+            // Try to cast whole type.
+            return source;
+        }
+        if (ts.IsIterable(source)) {
+            // Try to cast individual elements.
+            const sourceAnyArray = source;
+            if (ts.IsIterable(sourceAnyArray)) {
+                const sourceIArray = ConvertIterable(sourceAnyArray).Cast();
+                if (sourceIArray.IsIArray() && sourceIArray.IsArray())
+                    return sourceIArray;
+                throw new Error("InvalidArgument: source has an unexpected value.");
+            }
+            // Try to cast whole type.
+            return source;
+        }
         if (typeof source === "object") {
-            ts.Enumerator(source, function (element, key) {
-                results[key] = element;
-            });
-            return results;
+            // Try to clone object keys.
+            const sourceIArray = ConvertObject(source).Cast();
+            if (sourceIArray.IsIArray() && sourceIArray.IsArray())
+                return sourceIArray;
+            throw new Error("InvalidArgument: source has an unexpected value.");
         }
         throw new Error("InvalidArgument: source has an unexpected value.");
     }
     ts.Convert = Convert;
+    ;
+    function ConvertIArray(source) {
+        if (ts.IsNull(source))
+            return new ts.IArray();
+        return source;
+    }
+    ts.ConvertIArray = ConvertIArray;
+    ;
+    function ConvertArray(source) {
+        if (ts.IsNull(source))
+            return new ts.IArray();
+        const sourceAnyArray = source;
+        const sourceIArray = new ts.IArray();
+        for (var index = 0; index < sourceAnyArray.length; index++) {
+            const element = sourceAnyArray[index];
+            sourceIArray.push(element);
+        }
+        return sourceIArray;
+    }
+    ts.ConvertArray = ConvertArray;
+    ;
+    function ConvertArrayLike(source) {
+        if (ts.IsNull(source))
+            return new ts.IArray();
+        const sourceAnyArray = source;
+        const sourceIArray = new ts.IArray();
+        for (var index = 0; index < sourceAnyArray.length; index++) {
+            const element = sourceAnyArray[index];
+            sourceIArray.push(element);
+        }
+        return sourceIArray;
+    }
+    ts.ConvertArrayLike = ConvertArrayLike;
+    ;
+    function ConvertIterable(source) {
+        if (ts.IsNull(source))
+            return new ts.IArray();
+        const sourceAnyArray = source;
+        const sourceIArray = new ts.IArray();
+        for (var element of sourceAnyArray)
+            sourceIArray.push(element);
+        return sourceIArray;
+    }
+    ts.ConvertIterable = ConvertIterable;
+    ;
+    function ConvertObject(source) {
+        if (ts.IsNull(source))
+            return new ts.IArray();
+        // Try to clone object keys.
+        const results = new ts.IArray();
+        ts.Enumerator(source, function (element, key) {
+            results[key] = element;
+        });
+        return results;
+    }
+    ts.ConvertObject = ConvertObject;
     ;
     function DeepClone(source) {
         if (ts.IsNull(source))
             return source;
         const sourceType = typeof source;
         if (ts.IsNull(sourceType) || ts.IsFunction(source) || source instanceof Date
-            || ts.Contains(["string", "number", "boolean"], sourceType))
+            || ts.ContainsValue(["string", "number", "boolean"], sourceType))
             return source;
         if (sourceType === "object") {
             var result = new Array();
@@ -233,7 +320,7 @@ var ts;
         if (ts.IsFunction(expression))
             return expression;
         const expressionType = typeof expression;
-        if (ts.Contains(["number", "object"], expressionType))
+        if (ts.ContainsValue(["number", "object"], expressionType))
             throw new Error("ArgumentException: expression is of unexpected type.");
         var parts = expression.split("=>");
         var args = parts.length > 0 ? parts.shift().trim().replace(/\(|\)/g, "") : null;
@@ -281,6 +368,7 @@ var ts;
     class IArray extends Array {
         constructor(source) {
             super();
+            // delete all existing elements via splice, shouldn't be any.
             if (this.length > 0)
                 this.splice(0, this.length);
             if (ts.IsNull(source))
@@ -289,15 +377,22 @@ var ts;
                 const arrayLength = source;
                 if (arrayLength <= 0)
                     return;
-                this.splice(0, 0, ...new Array(arrayLength));
+                // add new elements via splice
+                for (var index = 0; index < arrayLength; index++)
+                    this.push();
                 return;
             }
             if (ts.IsIArray(source) || ts.IsArray(source) || ts.IsArrayLike(source) || ts.IsIterable(source)) {
-                this.splice(0, 0, ...ts.Convert(source).ToArray());
+                const sourceIArray = ts.Convert(source).Cast();
+                for (var index = 0; index < sourceIArray.length; index++)
+                    this.push(sourceIArray[index]);
                 return;
             }
             // attempt unknown casting or array types IArray<any>, Array<any>, ArrayLike<any>, Iterable<any>
-            this.splice(0, 0, ...ts.Convert(source).Cast().ToArray());
+            const sourceIArray = ts.Convert(source).Cast();
+            for (var index = 0; index < sourceIArray.length; index++)
+                this.push(sourceIArray[index]);
+            return;
         }
         new(source) {
             const sourceIArray = Object.create(IArray.prototype).Cast();
@@ -389,7 +484,7 @@ var ts;
             if (ts.IsNull(source))
                 return instanceIArray.Cast();
             const sourceIArray = ts.Convert(source);
-            return instanceIArray.Concat(sourceIArray).Cast();
+            return ts.Convert(instanceIArray.concat(sourceIArray)).Cast();
         }
         Contains(value) {
             return ts.Contains(this, value);
@@ -455,7 +550,7 @@ var ts;
         First(predicate) {
             var result = this.FirstOrDefault(predicate);
             if (ts.IsNull(result))
-                throw "No Results Found";
+                throw new Error("No Results Found");
             return result;
         }
         FirstOrDefault(predicate) {
@@ -578,18 +673,16 @@ var ts;
             if (ts.IsNull(predicate))
                 return ts.Convert(this.Sort(ts.Compare).ToArray());
             var expression = ts.CompileExpression(predicate);
-            return ts.Convert(this.Sort((a, b) => ts.Compare(expression(a), expression(b))));
+            return ts.Convert(this.sort((a, b) => ts.Compare(expression(a), expression(b))));
         }
         OrderByDescending(predicate) {
             return this.OrderBy(predicate).Reverse();
         }
         Push(source) {
-            const sourceIArray = ts.Convert(source);
-            const thisArray = this;
-            sourceIArray.forEach((element) => {
-                thisArray.push(element);
-            });
-            return thisArray.length;
+            // TODO: Imporove push logic to handle arrays
+            const element = source;
+            this.push(element);
+            return this.length;
         }
         Reverse() {
             return ts.Convert(this.ToArray().reverse());
@@ -667,20 +760,6 @@ var ts;
         Sort(predicate) {
             return this.OrderBy(predicate);
         }
-        // // results = [1, 2, 3, 4];
-        // // matches = [1, 2, 3];
-        // // results.splice.apply(results, [results.length, 0].concat(matches));
-        // // results ... (7) [1, 2, 3, 4, 1, 2, 3]
-        // public Splice(start: number, deleteCount: number): IArray<T> {
-        //     let results: Array<T> = this.ToArray();
-        //     const length: number = results.length;
-        //     let items: Array<number> = [length, 0].concat(new Array<number>());
-        //     if (IsNull(items))
-        //         results = results.splice(start, deleteCount);
-        //     else
-        //         results = results.splice(start, deleteCount, items);
-        //     return Convert<T>(results);
-        // };
         // results = [1, 2, 3, 4];
         // matches = [1, 2, 3];
         // results.splice.apply(results, [results.length, 0].concat(matches));

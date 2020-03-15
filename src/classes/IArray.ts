@@ -65,22 +65,30 @@ namespace ts {
         public constructor(source: any);
         public constructor(source?: any) {
             super();
+            // delete all existing elements via splice, shouldn't be any.
             if (this.length > 0) this.splice(0, this.length);
             if (IsNull(source)) return;
             if (Number.isInteger(source!)){
                 const arrayLength: number = (<number>source!);
                 if (arrayLength <= 0) return;
-                this.splice(0, 0, ...new Array<T>(arrayLength));
+                // add new elements via splice
+                for (var index = 0; index < arrayLength; index++)
+                    this.push();
                 return;
             }
 
             if (IsIArray<T>(source!) || IsArray<T>(source!) || IsArrayLike<T>(source!) || IsIterable<T>(source!)) {
-                this.splice(0, 0, ...Convert<T>(source).ToArray());
+                const sourceIArray: IArray<T> = Convert<any>(source!).Cast<T>();
+                for (var index = 0; index < sourceIArray.length; index++)
+                    this.push(sourceIArray[index]);
                 return;
             }
 
             // attempt unknown casting or array types IArray<any>, Array<any>, ArrayLike<any>, Iterable<any>
-            this.splice(0, 0, ...Convert<any>(source).Cast<T>().ToArray());
+            const sourceIArray: IArray<T> = Convert<any>(source!).Cast<T>();
+            for (var index = 0; index < sourceIArray.length; index++)
+                this.push(sourceIArray[index]);
+            return;
         }
 
         [x: string]: T & any;
@@ -175,7 +183,7 @@ namespace ts {
             const instanceIArray: IArray<any> = this.Cast<any>();
             if (IsNull(source)) return instanceIArray.Cast<TResult>();
             const sourceIArray: IArray<any> = Convert<any>(source);
-            return instanceIArray.Concat(sourceIArray).Cast<TResult>();
+            return Convert<any>(instanceIArray.concat(sourceIArray)).Cast<TResult>();
         }
 
         public Contains(value?: any): boolean {
@@ -249,7 +257,7 @@ namespace ts {
 
         public First(predicate?: Function): T {
             var result = this.FirstOrDefault(predicate);
-            if (IsNull(result)) throw "No Results Found";
+            if (IsNull(result)) throw new Error("No Results Found");
             return result!;
         }
 
@@ -390,7 +398,7 @@ namespace ts {
         public OrderBy(predicate?: any) {
             if (IsNull(predicate)) return Convert<T>(this.Sort(Compare).ToArray());
             var expression = CompileExpression(predicate);
-            return Convert<T>(this.Sort((a: T, b: T) => Compare(expression(a), expression(b))));
+            return Convert<T>(this.sort((a: T, b: T) => Compare(expression(a), expression(b))));
         }
 
         public OrderByDescending(predicate?: any) {
@@ -398,12 +406,10 @@ namespace ts {
         }
 
         public Push(source?: any): number {
-            const sourceIArray: IArray<T> = Convert<T>(source);
-            const thisArray: Array<T> = <Array<T>>this;
-            sourceIArray.forEach((element: T) => {
-                thisArray.push(element);
-            });
-            return thisArray.length;
+            // TODO: Imporove push logic to handle arrays
+            const element: T = <T>source;
+            this.push(element);
+            return this.length;
         }
 
         public Reverse(): IArray<T> {
@@ -490,21 +496,6 @@ namespace ts {
         public Sort(predicate?: Function): IArray<T> {
             return this.OrderBy(predicate);
         }
-
-        // // results = [1, 2, 3, 4];
-        // // matches = [1, 2, 3];
-        // // results.splice.apply(results, [results.length, 0].concat(matches));
-        // // results ... (7) [1, 2, 3, 4, 1, 2, 3]
-        // public Splice(start: number, deleteCount: number): IArray<T> {
-        //     let results: Array<T> = this.ToArray();
-        //     const length: number = results.length;
-        //     let items: Array<number> = [length, 0].concat(new Array<number>());
-        //     if (IsNull(items))
-        //         results = results.splice(start, deleteCount);
-        //     else
-        //         results = results.splice(start, deleteCount, items);
-        //     return Convert<T>(results);
-        // };
 
         // results = [1, 2, 3, 4];
         // matches = [1, 2, 3];
