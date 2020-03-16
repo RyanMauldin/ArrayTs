@@ -5,6 +5,7 @@ namespace ts {
   };
 
   export function IsNullOrEmpty(value?: any): boolean {
+    // TODO: add special case for Iterable to not use length
     return typeof value === "undefined" || value === null || value!.length <= 0;
   };
 

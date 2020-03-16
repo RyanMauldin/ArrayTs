@@ -17,6 +17,7 @@ var ts;
     ts.IsNull = IsNull;
     ;
     function IsNullOrEmpty(value) {
+        // TODO: add special case for Iterable to not use length
         return typeof value === "undefined" || value === null || value.length <= 0;
     }
     ts.IsNullOrEmpty = IsNullOrEmpty;
@@ -355,22 +356,22 @@ var ts;
 (function (ts) {
     //declare var IArray: IArrayConstructor;
     /**
-  * **`ArrayTs<T>`** is a [`TypeScript`](http://www.typescriptlang.org/) class in the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
-  * *namespace*, which ***enhances*** the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
-  * *type* by ***exposing*** *extension methods*, ***similar*** to the [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
-  * *interface* in [`Microsoft's`](https://www.microsoft.com/en-us/) [`.NET Core`](https://docs.microsoft.com/en-us/dotnet/core/)
-  * *framework*. The ***generic*** [`Array<T>`](https://www.typescriptlang.org/docs/handbook/generics.html) *interface* is
-  * being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *implementation* of the
-  * [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
-  * *interface* features, ***exposed*** to the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
-  * *type*. ***See usage:***
-  *
-  * ```typescript
-  * const numbers: ts.IArray<number> = ts.Convert<number>([ 1, 2, 3, 4 ]);
-  * let clonedNumbers: ts.IArray<number> = numbers.Clone();
-  * for (const number of clonedNumbers) { console.log(number); }
-  * ```
-  **/
+     * **`ArrayTs<T>`** is a [`TypeScript`](http://www.typescriptlang.org/) class in the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+     * *namespace*, which ***enhances*** the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+     * *type* by ***exposing*** *extension methods*, ***similar*** to the [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+     * *interface* in [`Microsoft's`](https://www.microsoft.com/en-us/) [`.NET Core`](https://docs.microsoft.com/en-us/dotnet/core/)
+     * *framework*. The ***generic*** [`Array<T>`](https://www.typescriptlang.org/docs/handbook/generics.html) *interface* is
+     * being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *implementation* of the
+     * [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
+     * *interface* features, ***exposed*** to the [`JavaScript`](https://www.javascript.com/) [`array`](https://www.w3schools.com/js/js_arrays.asp)
+     * *type*. ***See usage:***
+     *
+     * ```typescript
+     * const numbers: ts.IArray<number> = ts.Convert<number>([ 1, 2, 3, 4 ]);
+     * let clonedNumbers: ts.IArray<number> = numbers.Clone();
+     * for (const number of clonedNumbers) { console.log(number); }
+     * ```
+     **/
     //export class IArray<T> extends Array<T> implements ArrayTs<T>, IEnumerableArray<T>  {
     class IArray extends Array {
         constructor(source) {
@@ -389,22 +390,25 @@ var ts;
                     this.push();
                 return;
             }
-            if (ts.IsIArray(source) || ts.IsArray(source) || ts.IsArrayLike(source) || ts.IsIterable(source)) {
-                const sourceIArray = ts.Convert(source).Cast();
-                for (var index = 0; index < sourceIArray.length; index++)
-                    this.push(sourceIArray[index]);
+            if (ts.IsIArray(source) ||
+                ts.IsArray(source) ||
+                ts.IsArrayLike(source) ||
+                ts.IsIterable(source)) {
+                const anySource = ts.Convert(source).Cast();
+                for (var index = 0; index < anySource.length; index++)
+                    this.push(anySource[index]);
                 return;
             }
             // attempt unknown casting or array types IArray<any>, Array<any>, ArrayLike<any>, Iterable<any>
-            const sourceIArray = ts.Convert(source).Cast();
-            for (var index = 0; index < sourceIArray.length; index++)
-                this.push(sourceIArray[index]);
+            const anySource = ts.Convert(source).Cast();
+            for (var index = 0; index < anySource.length; index++)
+                this.push(anySource[index]);
             return;
         }
         new(source) {
-            const sourceIArray = Object.create(IArray.prototype).Cast();
-            sourceIArray.Set(source);
-            return sourceIArray;
+            const results = (Object.create(IArray.prototype)).Cast();
+            results.Set(source);
+            return results;
         }
         isArray(arg) {
             return arg.IsArray();
@@ -443,9 +447,9 @@ var ts;
             return ts.IsIArray(this) && this instanceof IArray;
         }
         Aggregate(predicate, seed) {
-            let aggregateValue;
             if (ts.IsNull(predicate))
-                throw Error("ArgumentNullException: predicate is null.");
+                throw new Error("ArgumentNullException: predicate is null.");
+            let aggregateValue;
             // Use seed as default return value for empty lists, otherwise throw an exception.
             if (!ts.IsNull(seed)) {
                 if (this.Any())
@@ -463,11 +467,15 @@ var ts;
             return aggregateValue;
         }
         All(predicate) {
-            const results = ts.IsNull(predicate) ? this : this.Where(predicate);
+            const results = ts.IsNull(predicate)
+                ? this
+                : this.Where(predicate);
             return results.length === this.length;
         }
         Any(predicate) {
-            const results = ts.IsNull(predicate) ? this : this.Where(predicate);
+            const results = ts.IsNull(predicate)
+                ? this
+                : this.Where(predicate);
             return results.length > 0;
         }
         Average() {
@@ -487,17 +495,19 @@ var ts;
             return ts.DeepClone(this);
         }
         Concat(source) {
-            const instanceIArray = this.Cast();
+            const anyInstance = this.Cast();
             if (ts.IsNull(source))
-                return instanceIArray.Cast();
-            const sourceIArray = ts.Convert(source);
-            return ts.Convert(instanceIArray.concat(sourceIArray)).Cast();
+                return anyInstance.Cast();
+            const anySource = ts.Convert(source);
+            return ts.Convert(anyInstance.concat(anySource)).Cast();
         }
         Contains(value) {
             return ts.Contains(this, value);
         }
         Count(predicate) {
-            const results = ts.IsNull(predicate) ? this : this.Where(predicate);
+            const results = ts.IsNull(predicate)
+                ? this
+                : this.Where(predicate);
             return results.length;
         }
         // Excluding DefaultIfEmpty
@@ -516,14 +526,14 @@ var ts;
             return results;
         }
         ElementAt(index) {
-            var result = this.ElementAtOrDefault(index);
-            if (result === null)
+            const result = this.ElementAtOrDefault(index);
+            if (ts.IsNull(result))
                 throw new Error("No Results Found");
             return result;
         }
         ElementAtOrDefault(index) {
             if (this.length === 0 || index < 0 || index - 1 > this.length)
-                return null;
+                return undefined;
             return this[index];
         }
         // From .net static array
@@ -548,7 +558,7 @@ var ts;
         //     const thisTypedArg: IArray<T> = <IArray<T>>thisArg;
         //     // const thisArgArray: Array<T> = thisTypedArg.ToArray();
         //     //var length = thisArgArray.length;
-        //     const length: number = thisArg.Length();
+        //     const length: number = thisArg.length;
         //     for(var index = 0; index < length; index++) {
         //         const value: T = <T>thisArg[index];
         //         callbackfn(value, index, thisArg);
@@ -561,8 +571,10 @@ var ts;
             return result;
         }
         FirstOrDefault(predicate) {
-            const results = ts.IsNull(predicate) ? this : this.Where(predicate);
-            return results.Length() > 0 ? results[0] : null;
+            const results = ts.IsNull(predicate)
+                ? this
+                : this.Where(predicate);
+            return results.length > 0 ? results[0] : undefined;
         }
         Get() {
             return this;
@@ -584,7 +596,7 @@ var ts;
             }
             const expression = ts.CompileExpression(predicate);
             const keys = this.Select(expression).Distinct();
-            const length = keys.Length();
+            const length = keys.length;
             for (var index = 0; index < length; index++) {
                 const obj = {};
                 keyName = keyName || "key";
@@ -599,14 +611,14 @@ var ts;
             return results;
         }
         GroupJoin(source, outerKey, innerKey, zipFunction) {
-            const length = this.Length();
+            const length = this.length;
             const oKeyExpression = ts.CompileExpression(outerKey);
             const iKeyExpression = ts.CompileExpression(innerKey);
             const results = new IArray();
             for (var index = 0; index < length; index++) {
                 var outerItem = this[index];
-                var matches = (ts.Convert(source)).Where(function (item) {
-                    return ts.Compare(oKeyExpression(outerItem, item), iKeyExpression(item, outerItem)) === 0;
+                var matches = ts.Convert(source).Where(function (item) {
+                    return (ts.Compare(oKeyExpression(outerItem, item), iKeyExpression(item, outerItem)) === 0);
                 });
                 results.Push(matches);
             }
@@ -618,17 +630,19 @@ var ts;
         // results.splice.apply(results, [results.length, 0].concat(matches));
         // results ... (7) [1, 2, 3, 4, 1, 2, 3]
         InnerJoin(source, outerKey, innerKey, zipFunction) {
-            const length = this.Length();
+            const length = this.length;
             const oKeyExpression = ts.CompileExpression(outerKey);
             const iKeyExpression = ts.CompileExpression(innerKey);
             let results = new IArray();
             for (var index = 0; index < length; index++) {
                 var outerItem = this[index];
-                var matches = (ts.Convert(source)).Where(function (item) {
+                var matches = ts.Convert(source).Where(function (item) {
                     return ts.Compare(oKeyExpression(outerItem), iKeyExpression(item)) === 0;
                 });
-                const resultsLength = results.Length();
-                const applyArray = ts.Convert([resultsLength, 0]).Concat(matches).Cast();
+                const resultsLength = results.length;
+                const applyArray = ts.Convert([resultsLength, 0])
+                    .Concat(matches)
+                    .Cast();
                 results = results.Splice(applyArray.length, resultsLength);
             }
             return this.Zip(results, zipFunction);
@@ -637,32 +651,32 @@ var ts;
             const results = new IArray();
             if (ts.IsNull(source))
                 return results;
-            const instanceIArray = this;
-            const length = instanceIArray.Length();
-            const sourceIArray = ts.Convert(source);
-            const sourceLength = sourceIArray.Length();
-            if (instanceIArray.Any() || sourceIArray.Any())
+            const anyInstance = this.Cast();
+            const anySource = ts.Convert(source);
+            if (anyInstance.length === 0 || anySource.length === 0)
                 return results;
-            for (var sourceIndex = 0; sourceIndex < sourceLength; sourceIndex++)
-                for (var index = 0; index < length; index++)
-                    if (ts.Compare(this[index], source[sourceIndex]) === 0)
-                        results.Push(this[index]);
+            for (var sourceIndex = 0; sourceIndex < anySource.length; sourceIndex++)
+                for (var index = 0; index < anyInstance.length; index++)
+                    if (ts.Compare(anyInstance[index], anySource[sourceIndex]) === 0)
+                        results.Push(anyInstance[index]);
             return results;
         }
         Last(predicate) {
-            var result = this.LastOrDefault(predicate);
-            if (result === null)
-                throw "No Results Found";
+            const result = this.LastOrDefault(predicate);
+            if (ts.IsNull(result))
+                throw new Error("No Results Found");
             return result;
         }
         LastOrDefault(predicate) {
-            var results = typeof predicate === "undefined" ? this : this.Where(predicate);
-            return results.ToArray().pop() || null;
+            var _a;
+            const results = ts.IsNull(predicate)
+                ? this
+                : this.Where(predicate);
+            return (_a = results.pop()) !== null && _a !== void 0 ? _a : undefined;
         }
-        Length() {
-            const thisArray = this;
-            return thisArray.length;
-        }
+        // public Length(): number {
+        //   return this.length;
+        // }
         // Excluding LongCount
         // Map<U>(this: Array<U>, ...args: any[]) : U[];
         // Map<U>(this: Array<T>, callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[] {
@@ -670,11 +684,11 @@ var ts;
         // }
         Max(predicate) {
             var results = this.Select(predicate);
-            return Math.max.apply(null, results);
+            return Math.max.apply(undefined, results);
         }
         Min(predicate) {
             var results = this.Select(predicate);
-            return Math.min.apply(null, results);
+            return Math.min.apply(undefined, results);
         }
         OrderBy(predicate) {
             if (ts.IsNull(predicate))
@@ -686,7 +700,7 @@ var ts;
             return this.OrderBy(predicate).Reverse();
         }
         Push(source) {
-            // TODO: Imporove push logic to handle arrays
+            // TODO: Improve push logic to handle arrays
             const element = source;
             this.push(element);
             return this.length;
@@ -718,7 +732,7 @@ var ts;
                 return false;
             if (this.length !== source.length)
                 return false;
-            const length = this.Length();
+            const length = this.length;
             for (var index = 0; index < length; index++)
                 if (ts.Compare(this[index], source[index]) !== 0)
                     return false;
@@ -730,9 +744,9 @@ var ts;
             }
             if (ts.IsNull(source))
                 return this.length;
-            const sourceIArray = ts.Convert(source);
-            if (sourceIArray.length > 0) {
-                sourceIArray.forEach(element => {
+            const tSource = ts.Convert(source);
+            if (tSource.length > 0) {
+                tSource.forEach(element => {
                     this.push(element);
                 });
             }
@@ -744,18 +758,18 @@ var ts;
             return this[0];
         }
         SingleOrDefault() {
-            const length = this.length;
-            if (length > 1)
+            if (this.length > 1)
                 throw new Error("Sequence does not contain a single element.");
-            return length === 1 ? this[0] : null;
+            return this.length === 1 ? this[0] : undefined;
         }
+        // TODO: try to remove internal calls;
         Skip(index) {
             return this.Slice(index, this.length);
         }
         SkipWhile(predicate) {
             var expression = ts.CompileExpression(predicate);
             var results = new IArray();
-            const length = this.Length();
+            const length = this.length;
             for (var index = 0; index < length; index++)
                 if (expression(this[index]) !== true)
                     results.Push(this[index]);
@@ -782,11 +796,13 @@ var ts;
         Splice(start, end, ...items) {
             if (ts.IsNull(items))
                 return ts.Convert(this.splice(start, end));
-            const itemsArray = ts.Convert(items).Cast().ToArray();
+            const itemsArray = ts.Convert(items)
+                .Cast()
+                .ToArray();
             return ts.Convert(this.splice(start, end, ...itemsArray));
         }
         Sum() {
-            const length = this.Length();
+            const length = this.length;
             if (length === 0)
                 return 0;
             var isInteger = function (value) {
@@ -797,7 +813,9 @@ var ts;
                 var value = this[index];
                 if (isNaN(value))
                     value = 0;
-                var currentValue = isInteger(value) ? parseInt(value) : parseFloat(value);
+                var currentValue = isInteger(value)
+                    ? parseInt(value)
+                    : parseFloat(value);
                 sum += currentValue;
             }
             return sum;
@@ -810,7 +828,7 @@ var ts;
                 return this;
             var expression = ts.CompileExpression(predicate);
             const results = new IArray();
-            const length = this.Length();
+            const length = this.length;
             for (let index = 0; index < length; index++) {
                 const item = this[index];
                 if (expression(item) !== true)
@@ -822,16 +840,22 @@ var ts;
         ToArray() {
             return this;
         }
+        // TODO: Remove internal calls to other internal functions, try to
+        // TODO: put in real functionality for performance.
         Union(source) {
             if (ts.IsNull(source))
                 return this.Cast();
-            return this.Cast().Concat(ts.Convert(source)).Distinct().Cast();
+            return this.Cast()
+                .Concat(ts.Convert(source))
+                .Distinct()
+                .Cast();
         }
         Where(predicate) {
-            const length = this.Length();
+            if (ts.IsNull(predicate))
+                throw new Error("ArgumentNullException: predicate is null.");
             const results = new IArray();
             const expression = ts.CompileExpression(predicate);
-            for (var index = 0; index < length; index++)
+            for (var index = 0; index < this.length; index++)
                 if (expression(this[index]) === true)
                     results.push(this[index]);
             return results;
@@ -842,31 +866,41 @@ var ts;
          * every element *zipped* in the sequence.
          *
          * ```typescript
-         * const numbers: ts.IArray<number> = ts.Convert<number>([ 1, 2, 3, 4 ]);
+         * const numbers: ts.IArray<number> = new ts.IArray<number>([ 1, 2, 3, 4 ]);
          * let clonedNumbers: ts.IArray<number> = numbers.Clone();
          * for (const number of clonedNumbers) { console.log(number); }
          *
-         * const numbers: ts.IArray<number> = ts.Convert<number>([ 1, 2, 3, 4 ]);
-         * const words: ts.IArray<string> = ts.Convert<string>([ "one", "two", "three" ]);
+         * const numbers: ts.IArray<number> = new ts.IArray<number>([ 1, 2, 3, 4 ]);
+         * const words: ts.IArray<string> = new ts.IArray<string>([ "one", "two", "three" ]);
          * let zipped: ts.IArray<string> = new ts.IArray<string>();
          * if (!ts.IsNullOrEmpty(numbers) && !ts.IsNullOrEmpty(words))
-         *     zipped = numbers.Cast<any>().Zip<any>(words, (first: any, second: any) => first + " " + second).Cast<string>();
+         *     zipped = numbers.Cast<string>().Zip<string>(words, (first: any, second: any) => first + " " + second);
          * for (const zip of zipped) { console.log(zip); }
          * ```
          */
+        // TODO: create type of ArrayLike<T>, Iterable<T>, Array<T>, IArray<T>, for source
+        // TODO: to further define user knows when casting takes place. 
         Zip(source, predicate) {
-            const instanceIArray = this;
-            if (ts.IsNull(predicate))
-                return instanceIArray.Cast();
-            let expression = ts.CompileExpression(predicate);
-            const sourceIArray = ts.Convert(source);
-            const sourceLength = sourceIArray.Length();
+            if (ts.IsNull(source))
+                throw new Error("ArgumentNullException: source is null.");
+            const anySource = ts.Convert(source);
+            if (this.length === 0 || anySource.length === 0)
+                return new IArray();
             const results = new IArray();
-            for (var index = 0; index < instanceIArray.length; index++) {
-                if (sourceLength <= index)
+            if (ts.IsNull(predicate)) {
+                for (var index = 0; index < this.length; index++) {
+                    if (anySource.length <= index)
+                        return results;
+                    results.push((this[index]));
+                }
+                return results;
+            }
+            let expression = ts.CompileExpression(predicate);
+            for (var index = 0; index < this.length; index++) {
+                if (anySource.length <= index)
                     return results;
-                const result = expression(instanceIArray[index], sourceIArray[index]);
-                results.Push(result);
+                const result = expression(this[index], anySource[index]);
+                results.push((result));
             }
             return results;
         }

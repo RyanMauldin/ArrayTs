@@ -32,11 +32,11 @@ namespace ts {
     Count(predicate?: any): number;
     Distinct(): IArray<T>;
     ElementAt(index?: number): T;
-    ElementAtOrDefault(index?: number): T | null;
+    ElementAtOrDefault(index?: number): T | undefined;
     Except(source?: any): IArray<T>;
     //forEach(callbackfn: (value: T, index: number, array: IArray<T>) => void, thisArg?: any): void;
     First(predicate?: any): T;
-    FirstOrDefault(predicate?: any): T | null;
+    FirstOrDefault(predicate?: any): T | undefined;
     Get(): IArray<T>;
     GetGenericType(): string;
     GroupBy<TResult>(predicate?: any, keyName?: any, valueName?: any): IArray<TResult>
@@ -46,8 +46,8 @@ namespace ts {
     IsArray<T>(): this is Array<T>;
     IsIArray<T>(): this is IArray<T>;
     Last(predicate?: any): T;
-    LastOrDefault(predicate?: any): T | null;
-    Length(): number;
+    LastOrDefault(predicate?: any): T | undefined;
+    //Length(): number;
     Max(predicate?: any): number;
     Min(predicate?: any): number;
     OrderBy(predicate?: any): IArray<T>;
@@ -59,7 +59,7 @@ namespace ts {
     SequenceEqual(source?: any): boolean;
     Set(source?: any): void;
     Single(): T;
-    SingleOrDefault(): T | null;
+    SingleOrDefault(): T | undefined;
     Skip(index?: number): IArray<T>;
     SkipWhile(predicate?: any): IArray<T>;
     Slice(start?: number, end?: number): IArray<T>;

@@ -1,288 +1,298 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+  <head>
     <title>ArrayTs Extensions Demo</title>
     <script src="./ArrayTs.js"></script>
-</head>
-    <body>
-        <script type="text/javascript">
-			function ready(fn) {
-			  if (document.readyState != 'loading'){
-				fn();
-			  } else if (document.addEventListener) {
-				document.addEventListener('DOMContentLoaded', fn);
-			  } else {
-				document.attachEvent('onreadystatechange', function() {
-				  if (document.readyState != 'loading')
-					fn();
-				});
-			  }
-			};
-			
-            ready(function () {
-                var output = document.getElementById("output");
-                var source = new ts.IArray([
-                    { Id: 1, Name: 'Item 1' },
-                    { Id: 2, Name: 'Item 2' },
-                    { Id: 3, Name: 'Item 3' },
-                    { Id: 4, Name: 'Item 4' },
-                    { Id: 5, Name: 'Item 5' },
-                    { Id: 6, Name: 'Item 6' },
-                    { Id: 7, Name: 'Item 7' }]);
-                var target = new ts.IArray([
-                    { Id: 8, Name: 'Item 8' },
-                    { Id: 9, Name: 'Item 9' },
-                    { Id: 10, Name: 'Item 10' },
-                    { Id: 11, Name: 'Item 11' },
-                    { Id: 12, Name: 'Item 12' },
-                    { Id: 13, Name: 'Item 13' },
-                    { Id: 14, Name: 'Item 14' }]);
-                var child = new ts.IArray([
-                    { Id: 1, Name: 'Item 8' },
-                    { Id: 2, Name: 'Item 9' },
-                    { Id: 3, Name: 'Item 10' },
-                    { Id: 4, Name: 'Item 11' },
-                    { Id: 5, Name: 'Item 12' },
-                    { Id: 6, Name: 'Item 13' },
-                    { Id: 7, Name: 'Item 14' }]);
+  </head>
+  <body>
+    <script type="text/javascript">
+      function ready(fn) {
+        if (document.readyState != "loading") {
+          fn();
+        } else if (document.addEventListener) {
+          document.addEventListener("DOMContentLoaded", fn);
+        } else {
+          document.attachEvent("onreadystatechange", function() {
+            if (document.readyState != "loading") fn();
+          });
+        }
+      }
 
-                var petOwners = new ts.IArray([
-                    { Name: "Higa, Sidney", Pets: ["Scruffy", "Sam"] },
-                    { Name: "Ashkenazi, Ronen", Pets: ["Walker", "Sugar"] },
-                    { Name: "Price, Vernette", Pets: ["Scratches", "Diesel"] }
-                ]);
+      ready(function() {
+        var output = document.getElementById("output");
+        var log = new ts.IArray();
+        var source = new ts.IArray([
+          { Id: 1, Name: "Item 1" },
+          { Id: 2, Name: "Item 2" },
+          { Id: 3, Name: "Item 3" },
+          { Id: 4, Name: "Item 4" },
+          { Id: 5, Name: "Item 5" },
+          { Id: 6, Name: "Item 6" },
+          { Id: 7, Name: "Item 7" }
+        ]);
+        var target = new ts.IArray([
+          { Id: 8, Name: "Item 8" },
+          { Id: 9, Name: "Item 9" },
+          { Id: 10, Name: "Item 10" },
+          { Id: 11, Name: "Item 11" },
+          { Id: 12, Name: "Item 12" },
+          { Id: 13, Name: "Item 13" },
+          { Id: 14, Name: "Item 14" }
+        ]);
+        var child = new ts.IArray([
+          { Id: 1, Name: "Item 8" },
+          { Id: 2, Name: "Item 9" },
+          { Id: 3, Name: "Item 10" },
+          { Id: 4, Name: "Item 11" },
+          { Id: 5, Name: "Item 12" },
+          { Id: 6, Name: "Item 13" },
+          { Id: 7, Name: "Item 14" }
+        ]);
 
-                var duplicates = new ts.IArray([
-                    { Id: 8, Name: 'Item 8' },
-                    { Id: 9, Name: 'Item 9' },
-                    { Id: 10, Name: 'Item 10' },
-                    { Id: 10, Name: 'Item 10' }]);
+        var petOwners = new ts.IArray([
+          { Name: "Higa, Sidney", Pets: ["Scruffy", "Sam"] },
+          { Name: "Ashkenazi, Ronen", Pets: ["Walker", "Sugar"] },
+          { Name: "Price, Vernette", Pets: ["Scratches", "Diesel"] }
+        ]);
 
-                //
-                //Where & OrderByDesc
-                //
+        var duplicates = new ts.IArray([
+          { Id: 8, Name: "Item 8" },
+          { Id: 9, Name: "Item 9" },
+          { Id: 10, Name: "Item 10" },
+          { Id: 10, Name: "Item 10" }
+        ]);
 
-                var query =
-                    source.Where('m=>m.Id > 3 && m.Id < 6')
-                        .OrderByDescending('m=>m.Name');
+        //
+        //Where & OrderByDesc
+        //
 
+        var query = source
+          .Where("m=>m.Id > 3 && m.Id < 6")
+          .OrderByDescending("m=>m.Name");
 
-                output.append('<b>Where & OrderByDesc</b>');
-                output.append("<br />");
-                query.forEach(function (o) {
-                    output.append("Id = " + o.Id + ", Name = " + o.Name);
-                    output.append("<br />");
-                });
+        log.push("<b>Where & OrderByDesc</b>", "<br />");
+        query.forEach(function(o) {
+          log.push("Id = " + o.Id + ", Name = " + o.Name);
+          log.push("<br />");
+        });
 
-                //
-                //First
-                //
+        //
+        //First
+        //
 
-                output.append("<br />");
-                output.append('<b>First</b>');
-                output.append("<br />");
-                var o = source.First('m=>m.Id > 3');
-                output.append("Id = " + o.Id + ", Name = " + o.Name);
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>First</b>");
+        log.push("<br />");
+        var o = source.First("m=>m.Id > 3");
+        log.push("Id = " + o.Id + ", Name = " + o.Name);
+        log.push("<br />");
 
-                //
-                //First Exception
-                //
+        //
+        //First Exception
+        //
 
-                output.append("<br />");
-                output.append('<b>First exception.</b>');
-                output.append("<br />");
-                try {
-                    o = source.First('m=>m.Id > 7');
-                    output.append("Id = " + o.Id + ", Name = " + o.Name);
-                } catch (e) {
-                    output.append('' + e);
-                }
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>First exception.</b>");
+        log.push("<br />");
+        try {
+          o = source.First("m=>m.Id > 7");
+          log.push("Id = " + o.Id + ", Name = " + o.Name);
+        } catch (e) {
+          log.push("" + e);
+        }
+        log.push("<br />");
 
-                //
-                //FirstOrDefault
-                //
+        //
+        //FirstOrDefault
+        //
 
-                output.append("<br />");
-                output.append('<b>FirstOrDefault</b>');
-                output.append("<br />");
-                o = source.FirstOrDefault('m=>m.Id == 8');
-                if (o === null) output.append('NULL');
-                else output.append("Id = " + o.Id + ", Name = " + o.Name);
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>FirstOrDefault</b>");
+        log.push("<br />");
+        o = source.FirstOrDefault("m=>m.Id == 8");
+        if (o === undefined) log.push("NULL");
+        else log.push("Id = " + o.Id + ", Name = " + o.Name);
+        log.push("<br />");
 
-                //
-                //Skip & Take
-                //
+        //
+        //Skip & Take
+        //
 
-                query = source.Skip(3).Take(2);
+        query = source.Skip(3).Take(2);
 
-                output.append("<br />");
-                output.append('<b>Skip & Take</b>');
-                output.append("<br />");
-                query.forEach(function (o) {
-                    output.append("Id = " + o.Id + ", Name = " + o.Name);
-                    output.append("<br />");
-                });
+        log.push("<br />");
+        log.push("<b>Skip & Take</b>");
+        log.push("<br />");
+        query.forEach(function(o) {
+          log.push("Id = " + o.Id + ", Name = " + o.Name);
+          log.push("<br />");
+        });
 
-                //
-                //Count
-                //
+        //
+        //Count
+        //
 
-                var i = source.Count('m=>m.Id > 4');
-                output.append("<br />");
-                output.append('<b>Count</b>');
-                output.append("<br />");
-                output.append(i);
-                output.append("<br />");
+        var i = source.Count("m=>m.Id > 4");
+        log.push("<br />");
+        log.push("<b>Count</b>");
+        log.push("<br />");
+        log.push(i);
+        log.push("<br />");
 
-                //
-                //Any
-                //
+        //
+        //Any
+        //
 
-                output.append("<br />");
-                output.append('<b>Any</b>');
-                output.append("<br />");
-                output.append('m.Id > 4 = ' + source.Any('m=>m.Id > 4'));
-                output.append("<br />");
-                output.append('m.Id > 8 = ' + source.Any('m=>m.Id > 8'));
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>Any</b>");
+        log.push("<br />");
+        log.push("m.Id > 4 = " + source.Any("m=>m.Id > 4"));
+        log.push("<br />");
+        log.push("m.Id > 8 = " + source.Any("m=>m.Id > 8"));
+        log.push("<br />");
 
-                //
-                //Select
-                //
+        //
+        //Select
+        //
 
-                query = petOwners.Select('m=>m.Pets');
+        query = petOwners.Select("m=>m.Pets");
 
-                output.append("<br />");
-                output.append('<b>Select</b>');
-                output.append("<br />");
-                query.forEach(function (o) {
-                    output.append(o.join());
-                    output.append("<br />");
-                });
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>Select</b>");
+        log.push("<br />");
+        query.forEach(function(o) {
+          log.push(o.join());
+          log.push("<br />");
+        });
+        log.push("<br />");
 
-                //
-                //Select Many
-                //
+        //
+        //Select Many
+        //
 
-                query = petOwners.SelectMany('m=>m.Pets');
+        query = petOwners.SelectMany("m=>m.Pets");
 
-                output.append("<br />");
-                output.append('<b>Select Many</b>');
-                output.append("<br />");
-                query.forEach(function (o) {
-                    output.append(o);
-                    output.append("<br />");
-                });
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>Select Many</b>");
+        log.push("<br />");
+        query.forEach(function(o) {
+          log.push(o);
+          log.push("<br />");
+        });
+        log.push("<br />");
 
-                //
-                //Union
-                //
+        //
+        //Union
+        //
 
-                query = source.Union(target);
+        query = source.Union(target);
 
-                output.append("<br />");
-                output.append('<b>Union</b>');
-                output.append("<br />");
-                query.forEach(function (o) {
-                    output.append("Id = " + o.Id + ", Name = " + o.Name);
-                    output.append("<br />");
-                });
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>Union</b>");
+        log.push("<br />");
+        query.forEach(function(o) {
+          log.push("Id = " + o.Id + ", Name = " + o.Name);
+          log.push("<br />");
+        });
+        log.push("<br />");
 
-                //
-                //Reverse
-                //
+        //
+        //Reverse
+        //
 
-                query = source.Reverse();
+        query = source.Reverse();
 
-                output.append("<br />");
-                output.append('<b>Reverse</b>');
-                output.append("<br />");
-                query.forEach(function (o) {
-                    output.append("Id = " + o.Id + ", Name = " + o.Name);
-                    output.append("<br />");
-                });
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>Reverse</b>");
+        log.push("<br />");
+        query.forEach(function(o) {
+          log.push("Id = " + o.Id + ", Name = " + o.Name);
+          log.push("<br />");
+        });
+        log.push("<br />");
 
-                //
-                //Max
-                //
+        //
+        //Max
+        //
 
-                query = source.Max('m=>m.Id');
+        query = source.Max("m=>m.Id");
 
-                output.append("<br />");
-                output.append('<b>Max</b>');
-                output.append("<br />");
-                output.append(query);
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>Max</b>");
+        log.push("<br />");
+        log.push(query);
+        log.push("<br />");
 
-                //
-                //Min
-                //
+        //
+        //Min
+        //
 
-                query = source.Min('m=>m.Id');
+        query = source.Min("m=>m.Id");
 
-                output.append("<br />");
-                output.append('<b>Min</b>');
-                output.append("<br />");
-                output.append(query);
-                output.append("<br />");
+        log.push("<br />");
+        log.push("<b>Min</b>");
+        log.push("<br />");
+        log.push(query);
+        log.push("<br />");
 
-                //
-                //Distinct
-                //
+        //
+        //Distinct
+        //
 
-                query = duplicates.Distinct();
+        query = duplicates.Distinct();
 
-                output.append("<br />");
-                output.append('<b>Distinct</b>');
-                output.append("<br />");
-                query.forEach(function (o) {
-                    output.append("Id = " + o.Id + ", Name = " + o.Name);
-                    output.append("<br />");
-                });
+        log.push("<br />");
+        log.push("<b>Distinct</b>");
+        log.push("<br />");
+        query.forEach(function(o) {
+          log.push("Id = " + o.Id + ", Name = " + o.Name);
+          log.push("<br />");
+        });
 
-				//
-                //Zip
-                //
+        //
+        //Zip
+        //
 
-                var numbers = new ts.IArray([ 1, 2, 3, 4 ]);
-                var words = new ts.IArray([ "one", "two", "three" ]);
-                var numbersAndWords = numbers.Zip(words, '(first, second) => first + " " + second');
+        var numbers = new ts.IArray([1, 2, 3, 4]);
+        var words = new ts.IArray(["one", "two", "three"]);
+        var numbersAndWords = numbers.Zip(
+          words,
+          '(first, second) => first + " " + second'
+        );
 
-                output.append("<br />");
-                output.append('<b>Zip</b>');
-                output.append("<br />");
-                numbersAndWords.forEach(function (o) {
-                    output.append(o);
-                    output.append("<br />");
-                });
+        log.push("<br />");
+        log.push("<b>Zip</b>");
+        log.push("<br />");
+        numbersAndWords.forEach(function(o) {
+          log.push(o);
+          log.push("<br />");
+        });
 
-				//
-                //InnerJoin
-                //
+        //
+        //InnerJoin
+        //
 
-                var joined = source.InnerJoin(child, 'm=>m.Id', 'm=>m.Id', '(source, child) => source.Name + " - " + child.Name');
+        var joined = source.InnerJoin(
+          child,
+          "m=>m.Id",
+          "m=>m.Id",
+          '(source, child) => source.Name + " - " + child.Name'
+        );
 
-                output.append("<br />");
-                output.append('<b>InnerJoin</b>');
-                output.append("<br />");
-                joined.forEach(function (o) {
-                    output.append(o);
-                    output.append("<br />");
-                });
-				
-				console.log("\n\nYou made it here!\n\n");
-            });
-        </script>
-        <h1>ArrayTs Demo Page</h1>
-        <div><br /></div>
-        <div id="output"></div>
-        <div><br /></div>
-    </body>
+        log.push("<br />");
+        log.push("<b>InnerJoin</b>");
+        log.push("<br />");
+        joined.forEach(function(o) {
+          log.push(o);
+          log.push("<br />");
+        });
+
+        output.innerHTML = unescape(log.join(""));
+      });
+    </script>
+    <h1>ArrayTs Demo Page</h1>
+    <div><br /></div>
+    <div id="output"></div>
+    <div><br /></div>
+  </body>
 </html>
