@@ -21,6 +21,7 @@
       ready(function() {
         var output = document.getElementById("output");
         var log = new ts.IArray();
+
         var source = new ts.IArray([
           { Id: 1, Name: "Item 1" },
           { Id: 2, Name: "Item 2" },
@@ -30,6 +31,7 @@
           { Id: 6, Name: "Item 6" },
           { Id: 7, Name: "Item 7" }
         ]);
+
         var target = new ts.IArray([
           { Id: 8, Name: "Item 8" },
           { Id: 9, Name: "Item 9" },
@@ -39,6 +41,7 @@
           { Id: 13, Name: "Item 13" },
           { Id: 14, Name: "Item 14" }
         ]);
+
         var child = new ts.IArray([
           { Id: 1, Name: "Item 8" },
           { Id: 2, Name: "Item 9" },
@@ -62,10 +65,7 @@
           { Id: 10, Name: "Item 10" }
         ]);
 
-        //
-        //Where & OrderByDesc
-        //
-
+        // Where & OrderByDesc
         var query = source
           .Where("m=>m.Id > 3 && m.Id < 6")
           .OrderByDescending("m=>m.Name");
@@ -76,10 +76,7 @@
           log.push("<br />");
         });
 
-        //
-        //First
-        //
-
+        // First
         log.push("<br />");
         log.push("<b>First</b>");
         log.push("<br />");
@@ -87,10 +84,7 @@
         log.push("Id = " + o.Id + ", Name = " + o.Name);
         log.push("<br />");
 
-        //
-        //First Exception
-        //
-
+        // First Exception
         log.push("<br />");
         log.push("<b>First exception.</b>");
         log.push("<br />");
@@ -102,10 +96,7 @@
         }
         log.push("<br />");
 
-        //
-        //FirstOrDefault
-        //
-
+        // FirstOrDefault
         log.push("<br />");
         log.push("<b>FirstOrDefault</b>");
         log.push("<br />");
@@ -114,10 +105,7 @@
         else log.push("Id = " + o.Id + ", Name = " + o.Name);
         log.push("<br />");
 
-        //
-        //Skip & Take
-        //
-
+        // Skip & Take
         query = source.Skip(3).Take(2);
 
         log.push("<br />");
@@ -128,10 +116,7 @@
           log.push("<br />");
         });
 
-        //
-        //Count
-        //
-
+        // Count
         var i = source.Count("m=>m.Id > 4");
         log.push("<br />");
         log.push("<b>Count</b>");
@@ -139,10 +124,7 @@
         log.push(i);
         log.push("<br />");
 
-        //
-        //Any
-        //
-
+        // Any
         log.push("<br />");
         log.push("<b>Any</b>");
         log.push("<br />");
@@ -151,10 +133,7 @@
         log.push("m.Id > 8 = " + source.Any("m=>m.Id > 8"));
         log.push("<br />");
 
-        //
-        //Select
-        //
-
+        // Select
         query = petOwners.Select("m=>m.Pets");
 
         log.push("<br />");
@@ -166,10 +145,7 @@
         });
         log.push("<br />");
 
-        //
-        //Select Many
-        //
-
+        // Select Many
         query = petOwners.SelectMany("m=>m.Pets");
 
         log.push("<br />");
@@ -181,10 +157,7 @@
         });
         log.push("<br />");
 
-        //
-        //Union
-        //
-
+        // Union
         query = source.Union(target);
 
         log.push("<br />");
@@ -196,10 +169,7 @@
         });
         log.push("<br />");
 
-        //
-        //Reverse
-        //
-
+        // Reverse
         query = source.Reverse();
 
         log.push("<br />");
@@ -211,10 +181,7 @@
         });
         log.push("<br />");
 
-        //
-        //Max
-        //
-
+        // Max
         query = source.Max("m=>m.Id");
 
         log.push("<br />");
@@ -223,10 +190,7 @@
         log.push(query);
         log.push("<br />");
 
-        //
-        //Min
-        //
-
+        // Min
         query = source.Min("m=>m.Id");
 
         log.push("<br />");
@@ -235,10 +199,7 @@
         log.push(query);
         log.push("<br />");
 
-        //
-        //Distinct
-        //
-
+        // Distinct
         query = duplicates.Distinct();
 
         log.push("<br />");
@@ -249,10 +210,7 @@
           log.push("<br />");
         });
 
-        //
-        //Zip
-        //
-
+        // Zip
         var numbers = new ts.IArray([1, 2, 3, 4]);
         var words = new ts.IArray(["one", "two", "three"]);
         var numbersAndWords = numbers.Zip(
@@ -268,10 +226,8 @@
           log.push("<br />");
         });
 
-        //
-        //InnerJoin
-        //
-
+        // InnerJoin
+        // TODO: Fix Inner Join code, somethings not right.
         var joined = source.InnerJoin(
           child,
           "m=>m.Id",
