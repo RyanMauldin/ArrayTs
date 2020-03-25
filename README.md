@@ -18,19 +18,21 @@ being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/Arra
 > of the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *project codebase*, in *favor* of *adopting* a
 > [**`UMD`**](https://github.com/umdjs/umd) *modular based* **design approach**. To *ensure* the **final** *transpiled/compiled*
 > [**`JavaScript`**](https://www.javascript.com/) *module definitions* are **accurate**, adding *additional* *build tools*
-> to the **`build workflow`** is *now* **necessary**, *e.g.* [**`Browserify`**](http://browserify.org/) & [**`Tsify`**](https://www.npmjs.com/package/tsify).
+> to the **`build workflow`** is *now* **necessary**, *e.g.* [**`Browserify`**](http://browserify.org/) & [**`tsify`**](https://www.npmjs.com/package/tsify).
 > Using a [**`UMD`**](https://github.com/umdjs/umd), *modular based* **design approach**, for [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs),
 > *provides* a **superior method**, for *avoiding* **naming collisions** with *all other* [**`npm`**](https://www.npmjs.com/)
 > *packages*, *duplicate namespaces* or *user-defined codebases*.
 >
->**2. Browserify / **Tsify**:** *Desire* to **implement** [**`Browserify`**](http://browserify.org/) & [**`tsify`**](https://www.npmjs.com/package/tsify).
+>**2. Browserify / **tsify**:** *Desire* to **implement** [**`Browserify`**](http://browserify.org/) & [**`tsify`**](https://www.npmjs.com/package/tsify).
+> These **build tools** will *greatly simplify* importing *content* and *downstream dependencies*, through using **`require()`** in *scripts*,
+> as well as *provide* a simple **configuration API** *integrated* into the *build pipeline*.
 >
 >**3. Unit Testing - Positive:** *Desire* to *flush out* & *fix* current **bugs** with [**`Happy Path`**](https://en.wikipedia.org/wiki/Happy_path)
 > *paradigm* in *mind*, *e.g.* **`InnerJoin()`** does **not** work.
 >
->*4. Error/Throw Logic Refactor:** *Desire* to **refactor** *logic lines* that *contain* **`throw new Error("...")`**
+>**4. Error/Throw Logic Refactor:** *Desire* to **refactor** *logic lines* that *contain* **`throw new Error("...")`**
 > style *logic implementations* in *favor* of a *response style* **continuation** or **observation** much like that of
-> [**`neverthrow`**](https://github.com/gdelgado14/neverthrow#top-level-api), as mentioned in the
+> [**`neverthrow`**](https://github.com/gdelgado14/neverthrow#top-level-api), as *mentioned* in the
 > [**`neverthrow dev.to`**](https://dev.to/_gdelgado/type-safe-error-handling-in-typescript-1p4n) *article*.
 >
 >**5. Unit Testing - Negative:** *Desire* to *flush out* **new bugs** by *trying* to *use* **failure cases**.
