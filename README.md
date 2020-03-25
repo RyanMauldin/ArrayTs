@@ -209,7 +209,7 @@ for the full working example.
 
 ***02/27/2020:*** [**`Ryan Mauldin`**](https://github.com/ryanmauldin)
 ***, refactored*** the *original* [**`ArrayJs (2013)`**](https://github.com/EmptyCubes/Array.js)
-*library* using a ***completely*** [TypeScript](http://www.typescriptlang.org/)
+*library* using a ***completely*** [**`TypeScript`**](http://www.typescriptlang.org/)
 ***& non prototype-based*** *approach*.
 
 **History:**
@@ -241,10 +241,10 @@ The ***stance*** [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) is taki
 ***must*** be *reliable* and *resilient* to *failure*, throughout an application's ***entire*** *development*
 *life-cycle*. [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) **must** remain *resilient to failure* when
 *adding* or *swapping out*, additional *external* [**`JavaScript`**](https://www.javascript.com/) or
-[TypeScript](http://www.typescriptlang.org/) *repository packages* from *popular sources*, e.g.
-[npm](https://www.npmjs.com/) or [bower](https://bower.io/). [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+[**`TypeScript`**](http://www.typescriptlang.org/) *repository packages* from *popular sources*, e.g.
+[**`npm`**](https://www.npmjs.com/) or [**`bower`**](https://bower.io/). [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
 will remain ***side-effect free***, while developers are ***implementing*** *solution configuration changes*, as well as when
-*upgrading* [TypeScript](http://www.typescriptlang.org/) versions. [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
+*upgrading* [**`TypeScript`**](http://www.typescriptlang.org/) versions. [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
 ***now*** has the *capability* to gain ***adoption*** by the *development community*, as *code integration*
 is ***safeguarded*** by the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *namespace*.
 
@@ -255,7 +255,7 @@ on a ***common type***, such as the *built-in* [**`JavaScript`**](https://www.ja
 *type*, placed [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) at *great risk* for ***external*** *package repository*
 [**`integration failures`**](https://stackoverflow.com/questions/8859828/javascript-what-dangers-are-in-extending-array-prototype),
 e.g. when consuming other ***well-known*** *repository library packages* from ***popular*** *package repository sources*,
-e.g. [npm](https://www.npmjs.com/) or [bower](https://bower.io/).
+e.g. [**`npm`**](https://www.npmjs.com/) or [**`bower`**](https://bower.io/).
 
 *Importing* ***external*** *repository packages* into a project always has the *potential* to ***introduce*** *extension method*
 ***naming collisions*** between *repository packages*. For *libraries* which do ***compete*** with *extending* the
