@@ -14,7 +14,7 @@ being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/Arra
 
 **Roadmap:**
 
->**1. Universal Module Definition (UMD):** *Desire* to **refactor** the **`ts`** namespace* **partially/fully** *out*
+>**1. Universal Module Definition (UMD):** *Desire* to **refactor** the **`ts`** *namespace* **partially/fully** *out*
 > of the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *project codebase*, in *favor* of *adopting* a
 > [**`UMD`**](https://github.com/umdjs/umd) *modular based* **design approach**. To *ensure* the **final** *transpiled/compiled*
 > [**`JavaScript`**](https://www.javascript.com/) *module definitions* are **accurate**, adding *additional* *build tools*
