@@ -12,6 +12,43 @@ being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/Arra
 *interface* features, ***exposed*** to the [**`JavaScript`**](https://www.javascript.com/) [**`array`**](https://www.w3schools.com/js/js_arrays.asp)
 *type*.
 
+**Roadmap:**
+
+>**1. Universal Module Definition (UMD):** *Desire* to **refactor** the **`ts`** namespace* **partially/fully** *out*
+> of the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *project codebase*, in *favor* of *adopting* a
+> [**`UMD`**](https://github.com/umdjs/umd) *modular based* **design approach**. To *ensure* the **final** *transpiled/compiled*
+> [**`JavaScript`**](https://www.javascript.com/) *module definitions* are **accurate**, adding *additional* *build tools*
+> to the **`build workflow`** is *now* **necessary**, *e.g.* [Browserify](http://browserify.org/) & [Tsify](https://www.npmjs.com/package/tsify).
+> Using a [**`UMD`**](https://github.com/umdjs/umd), *modular based* **design approach**, for [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs),
+> *provides* a **superior method**, for *avoiding* **naming collisions** with *all other* [**`npm`**](https://www.npmjs.com/)
+> *packages*, *duplicate namespaces* or *user-defined codebases*.
+>
+>**2. Browserify / **Tsify**:** *Desire* to **implement** [Browserify](http://browserify.org/) & [tsify](https://www.npmjs.com/package/tsify).
+>
+>**3. Unit Testing - Positive:** *Desire* to *flush out* & *fix* current **bugs** with [**`Happy Path`**](https://en.wikipedia.org/wiki/Happy_path)
+> *paradigm* in *mind*, *e.g.* **`InnerJoin()`** does **not** work.
+>
+>*4. Error/Throw Logic Refactor:** *Desire* to **refactor** *logic lines* that *contain* **`throw new Error("...")`**
+> style *logic implementations* in *favor* of a *response style* **continuation** or **observation** much like that of
+> [**`neverthrow`**](https://github.com/gdelgado14/neverthrow#top-level-api), as mentioned in the
+> [**`neverthrow dev.to`**](https://dev.to/_gdelgado/type-safe-error-handling-in-typescript-1p4n) *article*.
+>
+>**5. Unit Testing - Negative:** *Desire* to *flush out* **new bugs** by *trying* to *use* **failure cases**.
+>
+>**6. Code Documentation Updates:** *Desire* to *finish* **documentation** and **code comments** for **every** *method*,
+> *interface* and *readme*.
+>
+>**7. [**`npm`**](https://www.npmjs.com/) Package:** *Desire* to *create* the [**`npm`**](https://www.npmjs.com/) package
+> **array-ts** to *deploy* **package code** to [**`npm`**](https://www.npmjs.com/) in an *automated fashion*.
+>
+>**8. Create Documentation Site:** *Desire* to *create* a **Documentation Website** to help **others** *easily understand*
+> and *implement* [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs).
+
+**Known Issues:**
+
+***03/24/2020:*** [**`Ryan Mauldin`**](https://github.com/ryanmauldin) *discovered* issue with **InnerJoin()** when running
+[**`index.html`**](https://github.com/RyanMauldin/ArrayTs/blob/master/index.html).
+
 ***See [**`TypeScript`**](http://www.typescriptlang.org/) usage:***
 
 [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *library* includes *some functionality* **beyond** the [**`IEnumerable<T>`**](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.8)
@@ -169,41 +206,6 @@ for the full working example.
 
 ***Current Version:*** [**`ArrayTs (2020)`**](https://github.com/RyanMauldin/ArrayTs)
 ***, Author:*** [**`Ryan Mauldin`**](https://github.com/ryanmauldin)
-
-**Roadmap:**
-
->**1. Unit Testing - Positive:** *Desire* to *flush out* & *fix* current **bugs** with [**`Happy Path`**](https://en.wikipedia.org/wiki/Happy_path)
-> *paradigm* in *mind*, *e.g.* **`InnerJoin()`** does **not** work.
->
->**2. Error/Throw Logic Refactor:** *Desire* to **refactor** *logic lines* that *contain* **`throw new Error("...")`**
-> style *logic implementations* in *favor* of a *response style* **continuation** or **observation** much like that of
-> [**`neverthrow`**](https://github.com/gdelgado14/neverthrow#top-level-api), as mentioned in the
-> [**`neverthrow dev.to`**](https://dev.to/_gdelgado/type-safe-error-handling-in-typescript-1p4n) *article*. If the
-> *interface* **must** change *drastically* in an **unfavorable** way, to how *one* might *access* an *array* with *indexers*;
-> perhaps *something else* will do, but perhaps **`IArray<T>`** will **need** to be **`IArray<T, IArrayResponse<T>>`**,
-> *etc.*. The reason for the **extra** *response interface*, would be to **process** *success responses*, *error responses*, *etc.*,
-> but to *be able* to **chain off** the **response object** to method names that mimic **`IArray`**, to then receive **additional**
-> *responses downstream* in the *chain*. This way it is *possible* to *receive* a **promised response**, and *also* be **able to**
-> keep **method chaining**, but *also* have a *nested response* **`IArrayResponse<T>`**, that additionally *implements* **everything**,
-> **`IArray`** does, but is for **all** the **continuations** or **observable chains**. Who knows, just a *thought* in the *bucket*,
-> and **not much time** yet put towards these **concepts**, but I know *getting* **legit error messages** back, and being able to
-> **serve-up** *responses* to **promises** and **observables** could be **monumental** for **this** *library*.
->
->**3. Unit Testing - Negative:** *Desire* to *flush out* **new bugs** by *trying* to *use* **failure cases**.
->
->**4. Code Documentation Updates:** *Desire* to *finish* **documentation** and **code comments** for **every** *method*,
-> *interface* and *readme*.
->
->**5. [**`npm`**](https://www.npmjs.com/) Package:** *Desire* to *create* the [**`npm`**](https://www.npmjs.com/) package
-> **array-ts** to *deploy* **package code** to [**`npm`**](https://www.npmjs.com/) in an *automated fashion*.
->
->**6. Create Documentation Site:** *Desire* to *create* a **Documentation Website** to help **others** *easily understand*
-> and *implement* [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs).
-
-**Known Issues:**
-
-***03/24/2020:*** [**`Ryan Mauldin`**](https://github.com/ryanmauldin) *discovered* issue with **InnerJoin()** when running
-[**`index.html`**](https://github.com/RyanMauldin/ArrayTs/blob/master/index.html).
 
 **Refactor Notes:**
 
