@@ -79,8 +79,7 @@ for (const number of clonedNumbers.Where(p => p > 2)) { console.log(number); }
 
 [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *library* includes a set of *functional* **use-case scenarios**,
 **implemented** in [**`index.html`**](https://github.com/RyanMauldin/ArrayTs/blob/master/index.html), which follow the
-[**`Happy Path`**](https://en.wikipedia.org/wiki/Happy_path) *paradigm*. The *following code* shows *how-to access* the
-**ts namespace** from [**`JavaScript`**](https://www.javascript.com/) code. See [**`index.html`**](https://github.com/RyanMauldin/ArrayTs/blob/master/index.html),
+[**`Happy Path`**](https://en.wikipedia.org/wiki/Happy_path) *paradigm*. See [**`index.html`**](https://github.com/RyanMauldin/ArrayTs/blob/master/index.html),
 for the full working example.
 
 **[**`JavaScript`**](https://www.javascript.com/) code:**
@@ -250,7 +249,7 @@ The ***stance*** [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) is taki
 will remain ***side-effect free***, while developers are ***implementing*** *solution configuration changes*, as well as when
 *upgrading* [**`TypeScript`**](http://www.typescriptlang.org/) versions. [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs)
 ***now*** has the *capability* to gain ***adoption*** by the *development community*, as *code integration*
-is ***safeguarded*** by the [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *namespace*.
+is ***safeguarded*** by the [**`UMD`**](https://github.com/umdjs/umd) *modular based* **design approach**.
 
 For [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) to *achieve* this *new* ***desired level*** of *dependability*
 and *supportability*; the *new redesign* ***avoided*** *use of*, and *included* ***removal of*** *all* ***prototype***
@@ -273,5 +272,5 @@ the ***`Clone()`*** *method* does ***not*** *exist* on the [**`IEnumerable<T>`**
 However, there is a very high likelihood, that other common ***external*** *repository packages* have already extended
 the [**`JavaScript`**](https://www.javascript.com/) [**`array`**](https://www.w3schools.com/js/js_arrays.asp) *type* with their
 own ***`Clone()`*** *extension method*, which is why [**`ArrayTs`**](https://github.com/RyanMauldin/ArrayTs) *removed all*
-***prototype-based*** *extension methods* and ***provided*** *cleaner community interoperability* through ***interfaces***
-and ***namespaces***.
+***prototype-based*** *extension methods* and ***provided*** *cleaner community interoperability* through use of a
+ [**`UMD`**](https://github.com/umdjs/umd) *modular based* **design approach**.
