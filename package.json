@@ -1,15 +1,31 @@
 {
-  "name": "arrayts",
+  "name": "array-ts",
   "version": "1.0.0",
   "description": "ArrayTs is a TypeScript library which enhances the JavaScript array type by exposing extension methods, similar to the IEnumerable<T> interface in Microsoft's .NET Core framework. The generic Array<T> interface is being extended for ArrayTs implementation of the IEnumerable<T> interface features, exposed to the JavaScript array type.",
-  "main": "index.js",
-  "dependencies": {},
+  "main": "array-ts.min.js",
+  "dependencies": {
+    "@types/node": "^12.12.31"
+  },
   "devDependencies": {
-    "typescript": "^3.8.2"
+    "browserify": "^16.5.0",
+    "coffeeify": "^3.0.1",
+    "coffeescript": "^2.5.1",
+    "deamdify": "^0.3.0",
+    "deglobalify": "^0.2.0",
+    "envify": "^4.1.0",
+    "es6ify": "^1.6.0",
+    "exorcist": "^1.0.1",
+    "tinyify": "^2.5.2",
+    "tsify": "^4.0.1",
+    "typescript": "^3.8.3",
+    "watchify": "^3.11.1"
   },
   "scripts": {
     "build": "tsc -p .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build-cli": "browserify -p [ tsify --allowJs ] -t deamdify -t es6ify -t deglobalify -t [ coffeeify --bare false --header true ] -t [ envify purge --NODE_ENV development ] -t [ uglifyify -x .js -x .coffee ] -p exorcist -p tinyify --standalone ArrayTs dist/src/classes/ArrayTs.js > array-ts.map.js > array-ts.min.js",
+    "build-script": "node ./build.js > array-ts.min.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "watchify dist/src/classes/ArrayTs.js -o  '-p [ tsify --allowJs ] -t [ coffeeify --bare false --header true ] -t [ envify purge --NODE_ENV development ] -t [ uglifyify -x .js -x .coffee ] -p exorcist -p tinyify -standalone ArrayTs dist/src/classes/ArrayTs.js > array-ts.map.js > array-ts.min.js'"
   },
   "repository": {
     "type": "git",
@@ -23,6 +39,7 @@
     "IEnumerable<T>",
     "IEnumerable",
     "JavaScript",
+    "Linq",
     "array",
     "extension"
   ],

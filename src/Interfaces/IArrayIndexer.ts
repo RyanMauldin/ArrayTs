@@ -1,5 +1,3 @@
-namespace ts {
-    export interface IArrayIndexer {
-      [property: string]: IArray<any>;
-    }
+export interface IArrayIndexer {
+  [property: string]: IArray<any>;
 }

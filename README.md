@@ -57,14 +57,17 @@ being ***extended*** for the [**`ArrayTs`**](https://github.com/RyanMauldin/Arra
 *interface* as well, such as the **`Clone()`** *method* as *shown below*, which *offers* a **Deep Cloning** *capability*
 to the [**`JavaScript`**](https://www.javascript.com/) [**`array`**](https://www.w3schools.com/js/js_arrays.asp).
 
-**[**`TypeScript`**](http://www.typescriptlang.org/) code:**
+[**`TypeScript`**](http://www.typescriptlang.org/) **code:**|
 
 ```typescript
+var IArray = require("array-ts");
 const numbers: Array<number> = [ 1, 2, 3, 4 ];
-let clonedNumbers: ts.IArray<number> = new ts.IArray<number>();
-if (!ts.IsNullOrEmpty(numbers)) clonedNumbers = (<ts.IArray<number>>numbers).Clone();
-console.log("Cloned Numbers Greater Than 2:");
-for (const number of clonedNumbers.Where(p => p > 2)) { console.log(number); }
+let clonedNumbers: IArray<number> = new IArray<number>();
+if (!IArray.IsNullOrEmpty(numbers))
+    clonedNumbers = (<IArray<number>>numbers).Clone();
+console.log("Cloned numbers greater than 2:");
+for (const number of clonedNumbers.Where(p => p > 2))
+    console.log(number);
 ```
 
 **[**`TypeScript`**](http://www.typescriptlang.org/) output:**
@@ -82,11 +85,11 @@ for (const number of clonedNumbers.Where(p => p > 2)) { console.log(number); }
 [**`Happy Path`**](https://en.wikipedia.org/wiki/Happy_path) *paradigm*. See [**`index.html`**](https://github.com/RyanMauldin/ArrayTs/blob/master/index.html),
 for the full working example.
 
-**[**`JavaScript`**](https://www.javascript.com/) code:**
+[**`JavaScript`**](https://www.javascript.com/) **code:**
 
 ```javascript
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head><script src="./ArrayTs.js"></script></head>
+  <head><script src="./array-ts.min.js"></script></head>
   <body>
     <script type="text/javascript">
       function ready(fn) {

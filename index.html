@@ -2,10 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>ArrayTs Extensions Demo</title>
-    <script src="./ArrayTs.js"></script>
+    <script src="./array-ts.min.js"></script>
   </head>
   <body>
     <script type="text/javascript">
+      var ts = require("./array-ts.min.js", ["ArrayTs"]);
       function ready(fn) {
         if (document.readyState != "loading") {
           fn();
@@ -20,9 +21,9 @@
 
       ready(function() {
         var output = document.getElementById("output");
-        var log = new ts.IArray();
+        var log = new ts.ArrayTs([]);
 
-        var source = new ts.IArray([
+        var source = new ts.ArrayTs([
           { Id: 1, Name: "Item 1" },
           { Id: 2, Name: "Item 2" },
           { Id: 3, Name: "Item 3" },
@@ -32,7 +33,7 @@
           { Id: 7, Name: "Item 7" }
         ]);
 
-        var target = new ts.IArray([
+        var target = new ts.ArrayTs([
           { Id: 8, Name: "Item 8" },
           { Id: 9, Name: "Item 9" },
           { Id: 10, Name: "Item 10" },
@@ -42,7 +43,7 @@
           { Id: 14, Name: "Item 14" }
         ]);
 
-        var child = new ts.IArray([
+        var child = new ts.ArrayTs([
           { Id: 1, Name: "Item 8" },
           { Id: 2, Name: "Item 9" },
           { Id: 3, Name: "Item 10" },
@@ -52,13 +53,13 @@
           { Id: 7, Name: "Item 14" }
         ]);
 
-        var petOwners = new ts.IArray([
+        var petOwners = new ts.ArrayTs([
           { Name: "Higa, Sidney", Pets: ["Scruffy", "Sam"] },
           { Name: "Ashkenazi, Ronen", Pets: ["Walker", "Sugar"] },
           { Name: "Price, Vernette", Pets: ["Scratches", "Diesel"] }
         ]);
 
-        var duplicates = new ts.IArray([
+        var duplicates = new ts.ArrayTs([
           { Id: 8, Name: "Item 8" },
           { Id: 9, Name: "Item 9" },
           { Id: 10, Name: "Item 10" },
@@ -211,8 +212,8 @@
         });
 
         // Zip
-        var numbers = new ts.IArray([1, 2, 3, 4]);
-        var words = new ts.IArray(["one", "two", "three"]);
+        var numbers = new ts.ArrayTs([1, 2, 3, 4]);
+        var words = new ts.ArrayTs(["one", "two", "three"]);
         var numbersAndWords = numbers.Zip(
           words,
           '(first, second) => first + " " + second'
